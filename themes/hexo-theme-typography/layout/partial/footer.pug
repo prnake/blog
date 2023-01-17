@@ -6,7 +6,7 @@ footer
             | -
         !=currYear
         | &nbsp;
-        a(target="_blank", href=config.url,  rel="noopener noreferrer")!=theme.author ? theme.author : config.author ? config.author : config.title
+        a(target="_blank", href=theme.url ? theme.url : config.url,  rel="noopener noreferrer")!=theme.author ? theme.author : config.author ? config.author : config.title
     if theme.beian
         p
             a(target="_blank", href="http://beian.miit.gov.cn/", rel="noopener noreferrer")!=theme.beian
