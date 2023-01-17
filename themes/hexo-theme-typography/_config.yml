@@ -1,0 +1,35 @@
+title_primary: "纸蛇" # the bigger text
+title_secondary: "Papersnake" # the smaller text
+keywords:
+
+twitter: papersnake
+rss: atom.xml
+weibo: #username/id
+instagram: #username
+github: prnake
+
+# Choose the comment service according to your need.
+# Please do not use the two services at the same time.
+livere: # [data-uid] on livere.com
+disqus: # [short_name] on disqus.com
+dove: # For fun ONLY. Set to true to 'disable' comments on your site.
+
+# Set true to show the page indicator.
+showPageCount: true
+
+# Set true to show category or tags behind post titles
+showCategories: true
+showTags: true
+
+# Color scheme
+themeStyle: light # light/dark
+
+startYear: 2019
+
+hitokoto: 
+    enable: true
+    api: https://v1.hitokoto.cn/?max_length=15
+
+truncate_len: 160
+
+highlightjs: true
