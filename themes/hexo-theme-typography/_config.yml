@@ -35,3 +35,6 @@ hitokoto:
 truncate_len: 160
 
 highlightjs: true
+
+background:
+    rotate: true
