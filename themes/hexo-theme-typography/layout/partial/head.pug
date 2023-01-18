@@ -12,7 +12,7 @@ if page.keywords
 else
     meta(name="keywords" content= config.keywords ? config.keywords : theme.keywords ? theme.keywords : "")
 
-meta(content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0",name="viewport")
+meta(content="width=device-width,initial-scale=1,viewport-fit=cover",name="viewport")
 meta(content="yes",name="apple-mobile-web-app-capable")
 meta(content="black",name="apple-mobile-web-app-status-bar-style")
 meta(content="telephone=no",name="format-detection")
@@ -26,9 +26,11 @@ meta(name="renderer",content="webkit")
 <meta name="msapplication-config" content="/images/browserconfig.xml">
 <meta name="theme-color" content="#ffffff">
 link(rel="stylesheet", href= url_for('//cdn.staticfile.org/twitter-bootstrap/3.4.1/css/bootstrap.min.css'))
-link(rel="stylesheet", href= url_for('//cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css'))
+link(rel="stylesheet ", href= url_for('//cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css'))
+<link rel="preload" as="style" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:100,300,400,600&display=swap"/>
+<link rel="preload" as="font" type="font/woff2" crossorigin href="//cdn.staticfile.org/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2?v=4.7.0"/>
 if theme.highlightjs
-    link(rel="stylesheet", href= url_for('css/tomorrow.css'))
+    link(rel="stylesheet", href= url_for('//cdn.staticfile.org/highlight.js/11.7.0/styles/base16/tomorrow.min.css'))
 //- link(rel="stylesheet", href= url_for('css/typography-custom-font.css'))
 if theme.themeStyle == "light"
     link(rel="stylesheet", href= url_for('css/style.css'))
