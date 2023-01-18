@@ -179,6 +179,42 @@ text_autospace_filter:
   tag_name: 'ciallo'
   entry: 'body'
 
+seo:
+  html:
+    enable: true
+    fix: true
+  css:
+    enable: true
+  js:
+    enable: true
+    options:
+      compress:
+        dead_code: true
+      mangle:
+        toplevel: true
+        safari10: true
+  schema:
+    article:
+      enable: true
+    breadcrumb:
+      enable: true
+    # sitelink:
+    #   enable: true
+    #   searchUrl: https://blog.pka.moe/search/?s={search_term_string}
+  # external links fix
+  links:
+    # enable or false
+    enable: true
+    # allowed following links, otherwise nofollow others
+    exclude:
+      - pka.moe
+  sitemap: true
+
+search:
+  path: search.xml
+  field: post
+  content: true
+  format: html
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
