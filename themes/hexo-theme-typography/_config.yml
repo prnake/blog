@@ -12,6 +12,9 @@ github: prnake
 
 # Choose the comment service according to your need.
 # Please do not use the two services at the same time.
+artalk:
+    site: '纸蛇的博客'
+    server: 'https://talk.lo-li.co'
 livere: # [data-uid] on livere.com
 disqus: # [short_name] on disqus.com
 dove: # For fun ONLY. Set to true to 'disable' comments on your site.

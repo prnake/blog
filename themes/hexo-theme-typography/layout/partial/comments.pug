@@ -1,3 +1,17 @@
+if theme.artalk
+    div#comments
+    script(src= url_for('//cdn.staticfile.org/artalk/2.4.4/Artalk.min.js'))
+    script.
+        var artalk = new Artalk({
+            el: '#comments',
+            pageKey: '#{page.permalink}',
+            pageTitle: '#{page.title}',
+            server: '#{theme.artalk.server}',
+            site: '#{theme.artalk.site}',
+            locale: 'auto',
+            emoticons: "/emoji.json"
+        })
+
 if theme.disqus
     a#comments
     #disqus_thread
