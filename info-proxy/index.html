@@ -1,0 +1,103 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><meta name="author"><title>使用 Node.js 建立 info 的简单代理服务器 · 纸蛇</title><meta name="description" content="主要需求是在校外结合 RSSHub 订阅 info ，避免错过重要通知。"><meta name="og:description" content="主要需求是在校外结合 RSSHub 订阅 info ，避免错过重要通知。"><meta name="twitter:site" content="纸蛇"><meta name="twitter:title" content="使用 Node.js 建立 info 的简单代理服务器"><meta name="twitter:card" content="summary"><meta name="keywords" content="纸蛇,Papersnake,blog"><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png"><link rel="manifest" href="/images/site.webmanifest"><link rel="shortcut icon" href="/images/favicon.svg"><meta name="msapplication-config" content="/images/browserconfig.xml"><meta name="theme-color" content="#ffffff"><link rel="stylesheet" href="//cdn.staticfile.org/twitter-bootstrap/3.4.1/css/bootstrap.min.css"><link rel="stylesheet " href="//cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css"><link rel="stylesheet " href="//cdn.staticfile.org/artalk/2.4.4/Artalk.min.css"><link rel="stylesheet" href="//cdn.staticfile.org/highlight.js/11.7.0/styles/base16/tomorrow.min.css"><link rel="stylesheet" href="/css/style.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"><style>body ciallo:after{content:' ';display:inline;font-family:inherit;font-size:.45em}html .tag-list-item ciallo,html code ciallo,html kbd ciallo,html pre ciallo,html ruby ciallo,html samp ciallo{display:none}html ol>ciallo,html ul>ciallo{display:none}</style><meta name="generator" content="Hexo 6.3.0"><script type="application/ld+json" id="hexo-seo-schema">[
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": "https://developers.google.com/search/docs/advanced/structured-data/breadcrumb",
+    "name": "breadcrumb",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "item": "https://blog.pka.moe/tags/NodeJs/",
+        "name": "NodeJs"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "item": "https://blog.pka.moe/tags/Proxy/",
+        "name": "Proxy"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "item": "https://blog.pka.moe/categories/Coding/",
+        "name": "Coding"
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "item": "https://blog.pka.moe/info-proxy/",
+        "name": "使用 Node.js 建立 info 的简单代理服务器"
+      }
+    ]
+  }
+]</script><link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml"></head><body><div class="container" id="stage"><div class="row"><div class="col-sm-3 col-xs-12 side-container invisible" id="side-bar"><div class="vertical-text site-title"><h3 class="site-title-small" tabindex="-1"><a class="a-title" id="hitokoto" href="/">Papersnake</a></h3><h1 class="site-title-large" tabindex="-1"><a class="a-title" href="/"><ciallo></ciallo>纸蛇</a></h1></div><br class="visible-lg visible-md visible-sm"><div class="site-title-links" id="site-nav"><ul><li><a href="/">首页</a></li><li><a href="/archives">归档</a></li><li><a href="/categories">分类</a></li><li><a href="/tags">标签</a></li><li><a href="/about.html">关于</a></li><li class="soc"><a href="https://github.com/prnake" target="_blank" rel="nofollow noopener noreferer noreferrer external" aria-label="Github" alt="使用 Node.js 建立 info 的简单代理服务器" title="使用 Node.js 建立 info 的简单代理服务器"><i class="fa fa-github">&nbsp;</i></a><a href="https://twitter.com/papersnake" target="_blank" rel="nofollow noopener noreferer noreferrer external" aria-label="Twitter" alt="使用 Node.js 建立 info 的简单代理服务器" title="使用 Node.js 建立 info 的简单代理服务器"><i class="fa fa-twitter">&nbsp;</i></a><a href="https://blog.pka.moe/atom.xml" target="_blank" rel="internal follow bookmark" aria-label="RSS" alt="使用 Node.js 建立 info 的简单代理服务器" title="使用 Node.js 建立 info 的简单代理服务器"><i class="fa fa-rss">&nbsp;</i></a></li></ul><div class="visible-lg visible-md visible-sm site-nav-footer"><br class="site-nav-footer-br"><footer><p>©&nbsp;2019-2023&nbsp;<a target="_blank" href="https://pka.moe" rel="internal follow bookmark" alt="使用 Node.js 建立 info 的简单代理服务器" title="使用 Node.js 建立 info 的简单代理服务器">Papersnake</a></p><p>Theme&nbsp;<a target="_blank" href="https://github.com/SumiMakito/hexo-theme-typography" rel="nofollow noopener noreferer noreferrer external" alt="使用 Node.js 建立 info 的简单代理服务器" title="使用 Node.js 建立 info 的简单代理服务器">Typography</a>&nbsp;by&nbsp;<a target="_blank" href="https://www.keep.moe" rel="nofollow noopener noreferer noreferrer external" alt="使用 Node.js 建立 info 的简单代理服务器" title="使用 Node.js 建立 info 的简单代理服务器">Makito</a></p><p>Proudly published with&nbsp;<a target="_blank" href="https://hexo.io" rel="nofollow noopener noreferer noreferrer external" alt="使用 Node.js 建立 info 的简单代理服务器" title="使用 Node.js 建立 info 的简单代理服务器">Hexo</a></p></footer></div></div></div><div class="col-sm-9 col-xs-12 main-container invisible" id="main-container"><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post-container"><p class="post-title"><a><ciallo></ciallo>使用 Node.js 建立 info 的简单代理服务器</a></p><p class="post-meta"><span class="date meta-item">发布于&nbsp;2020-02-15</span><span class="meta-item"><i class="fa fa-folder"></i><span>&nbsp;</span><a class="a-tag" href="/categories/Coding/" title="Coding">Coding</a><span>&nbsp;</span></span><span class="meta-item"><i class="fa fa-tag"></i><span>&nbsp;</span><a class="a-tag" href="/tags/NodeJs/" title="NodeJs">NodeJs</a><span>&nbsp;</span><a class="a-tag" href="/tags/Proxy/" title="Proxy">Proxy</a><span>&nbsp;</span></span></p><p class="post-meta">本文共计&nbsp;<span class="post-count">414</span>&nbsp;字，预计阅读时长&nbsp;<span class="post-count">2</span>&nbsp;分钟，被阅读&nbsp;<span id="ArtalkPV"></span>&nbsp;次。</p><p class="post-abstract"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"></p><p>主要需求是在校外结合 RSSHub 订阅 info ，避免错过重要通知。</p><span id="more"></span><p>首先利用清华大学提供的 <a target="_blank" rel="nofollow noopener noreferer noreferrer external" href="https://webvpn.tsinghua.edu.cn/" alt="使用 Node.js 建立 info 的简单代理服务器" title="使用 Node.js 建立 info 的简单代理服务器">WEBVPN</a> 搭建实现自动登录功能的代理服务器。（新版 WEBVPN 只是校内代理，相较于以前自动登录 info 的 SSLVPN 风险较小）</p><p>学习并使用 Node.js，使用单语句<ciallo></ciallo><code>req.pipe(request).pip(res)</code><ciallo></ciallo>实现不完美的网页代理（在这里够用了）。</p><pre><code class="javascript">var request = require("request");
+var express = require("express");
+
+//<ciallo></ciallo>登陆 post 地址
+let url = 'https://webvpn.tsinghua.edu.cn/do-login?local_login=true';
+//<ciallo></ciallo>登陆的用户邮箱和密码
+let user = {
+    username: '',
+    password: '',
+};
+//<ciallo></ciallo>登陆 post 的所有数据
+let datas = {
+    auth_type: 'local',
+    username: user.username,
+    sms_code: '',
+    password: user.password,
+    remember_cookie: 'on',
+};
+
+//<ciallo></ciallo>设置头部
+let ua = `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36`;
+let headers = {
+    'User-Agent': ua,
+};
+
+let opts = {
+    url: url,
+    method: 'POST',
+    headers: headers,
+    form: datas,
+};
+
+//<ciallo></ciallo>模拟登陆
+var cookie;
+request(opts, (e, r, b) =&gt; {
+    cookie = r.headers['set-cookie'];
+});
+
+var app = express();
+app.use("/", function (req, res) {
+    request({
+            url: "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/initial/letter.gif",
+            headers: {
+                Cookie: cookie, 
+                'User-Agent': ua,
+            }},(e, r, b) =&gt; {
+                //<ciallo></ciallo>检测 cookie 是否失效
+                if(b.indexOf('html')&gt;0){
+                    request(opts, (e, r, b) =&gt; {
+                        cookie = r.headers['set-cookie'];
+                    });
+                }
+            }
+    );
+    //<ciallo></ciallo>增强安全性
+    if(req.url.match(/^\/(http|wengine-vpn)/)){
+        req.pipe(request({
+                url: "https://webvpn.tsinghua.edu.cn" + req.url,
+                headers: {
+                    Cookie: cookie, 
+                    'User-Agent': ua,
+                },
+                encoding: null,
+                qs: req.query,
+                method: req.method
+            })).pipe(res);
+    }
+    });
+app.listen(process.env.PORT || 3000);
+</code></pre><p>同时使用 <a target="_blank" rel="nofollow noopener noreferer noreferrer external" href="https://docs.rsshub.app/university.html#qing-hua-da-xue" alt="使用 Node.js 建立 info 的简单代理服务器" title="使用 Node.js 建立 info 的简单代理服务器">RSSHub</a> 实现了清华大学校内信息发布平台的 RSS 化。</p><p></p></div><div class="pagination" style="width:100%"><p class="clearfix"><span class="pre pagbuttons" style="float:left"><a role="navigation" href="/pthreads/" title="Pthreads - 共享内存式编程"><i class="fa fa-angle-double-left"></i>&nbsp;上一篇: Pthreads - 共享内存式编程</a></span><span>&nbsp;</span><span class="next pagbuttons" style="float:right"><a role="navigation" href="/thuctf-2019-writeup/" title="THUCTF 2019 - Writeup">下一篇: THUCTF 2019 - Writeup&nbsp;<i class="fa fa-angle-double-right"></i></a></span></p></div><div id="comments"></div><script src="//cdn.staticfile.org/artalk/2.4.4/Artalk.min.js"></script><script>var artalk=new Artalk({el:"#comments",pageKey:"https://blog.pka.moe/info-proxy/",pageTitle:"使用 Node.js 建立 info 的简单代理服务器",server:"https://talk.lo-li.co",site:"纸蛇的博客",locale:"auto"})</script></div></div></div><div class="visible-xs site-bottom-footer"><footer><p>©&nbsp;2019-2023&nbsp;<a target="_blank" href="https://pka.moe" rel="internal follow bookmark" alt="使用 Node.js 建立 info 的简单代理服务器" title="使用 Node.js 建立 info 的简单代理服务器">Papersnake</a></p><p>Theme&nbsp;<a target="_blank" href="https://github.com/SumiMakito/hexo-theme-typography" rel="nofollow noopener noreferer noreferrer external" alt="使用 Node.js 建立 info 的简单代理服务器" title="使用 Node.js 建立 info 的简单代理服务器">Typography</a>&nbsp;by&nbsp;<a target="_blank" href="https://www.keep.moe" rel="nofollow noopener noreferer noreferrer external" alt="使用 Node.js 建立 info 的简单代理服务器" title="使用 Node.js 建立 info 的简单代理服务器">Makito</a></p><p>Proudly published with&nbsp;<a target="_blank" href="https://hexo.io" rel="nofollow noopener noreferer noreferrer external" alt="使用 Node.js 建立 info 的简单代理服务器" title="使用 Node.js 建立 info 的简单代理服务器">Hexo</a></p></footer></div></div></div></div><script src="//cdn.staticfile.org/jquery/3.6.3/jquery.min.js"></script><script src="//cdn.staticfile.org/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script><script src="//cdn.staticfile.org/jquery-migrate/3.4.0/jquery-migrate.min.js"></script><script src="//cdn.staticfile.org/jquery-appear/0.1/jquery.appear.min.js"></script><script src="/js/typography.js"></script><script src="//cdn.staticfile.org/highlight.js/11.7.0/highlight.min.js"></script><script>hljs.highlightAll()</script><script>function hitokoto(){$("#hitokoto").html("&nbsp;"),$.get("https://v1.hitokoto.cn/?max_length=15",{},(function(o){$("#hitokoto").html(o.hitokoto)}),"JSON")}hitokoto()</script><script>Math.random()<.5&&$("head").append("<style>body::before{transform: rotateY(180deg) !important;background-position: right bottom !important}</style>")</script></body></html>

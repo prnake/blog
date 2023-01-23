@@ -1,0 +1,170 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><meta name="author"><title>旁路攻击：一道典型题的分析 · 纸蛇</title><meta name="description" content="分析 side-channel attack 的典型题 CSAW CTF 2015 - wyvern。"><meta name="og:description" content="分析 side-channel attack 的典型题 CSAW CTF 2015 - wyvern。"><meta name="twitter:site" content="纸蛇"><meta name="twitter:title" content="旁路攻击：一道典型题的分析"><meta name="twitter:card" content="summary"><meta name="keywords" content="纸蛇,Papersnake,blog"><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png"><link rel="manifest" href="/images/site.webmanifest"><link rel="shortcut icon" href="/images/favicon.svg"><meta name="msapplication-config" content="/images/browserconfig.xml"><meta name="theme-color" content="#ffffff"><link rel="stylesheet" href="//cdn.staticfile.org/twitter-bootstrap/3.4.1/css/bootstrap.min.css"><link rel="stylesheet " href="//cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css"><link rel="stylesheet " href="//cdn.staticfile.org/artalk/2.4.4/Artalk.min.css"><link rel="stylesheet" href="//cdn.staticfile.org/highlight.js/11.7.0/styles/base16/tomorrow.min.css"><link rel="stylesheet" href="/css/style.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"><style>body ciallo:after{content:' ';display:inline;font-family:inherit;font-size:.45em}html .tag-list-item ciallo,html code ciallo,html kbd ciallo,html pre ciallo,html ruby ciallo,html samp ciallo{display:none}html ol>ciallo,html ul>ciallo{display:none}</style><meta name="generator" content="Hexo 6.3.0"><script type="application/ld+json" id="hexo-seo-schema">[
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": "https://developers.google.com/search/docs/advanced/structured-data/breadcrumb",
+    "name": "breadcrumb",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "item": "https://blog.pka.moe/tags/PWN/",
+        "name": "PWN"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "item": "https://blog.pka.moe/categories/CTF/",
+        "name": "CTF"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "item": "https://blog.pka.moe/side-channel-attack/",
+        "name": "旁路攻击：一道典型题的分析"
+      }
+    ]
+  }
+]</script><link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml"></head><body><div class="container" id="stage"><div class="row"><div class="col-sm-3 col-xs-12 side-container invisible" id="side-bar"><div class="vertical-text site-title"><h3 class="site-title-small" tabindex="-1"><a class="a-title" id="hitokoto" href="/">Papersnake</a></h3><h1 class="site-title-large" tabindex="-1"><a class="a-title" href="/"><ciallo></ciallo>纸蛇</a></h1></div><br class="visible-lg visible-md visible-sm"><div class="site-title-links" id="site-nav"><ul><li><a href="/">首页</a></li><li><a href="/archives">归档</a></li><li><a href="/categories">分类</a></li><li><a href="/tags">标签</a></li><li><a href="/about.html">关于</a></li><li class="soc"><a href="https://github.com/prnake" target="_blank" rel="nofollow noopener noreferer noreferrer external" aria-label="Github" alt="旁路攻击：一道典型题的分析" title="旁路攻击：一道典型题的分析"><i class="fa fa-github">&nbsp;</i></a><a href="https://twitter.com/papersnake" target="_blank" rel="nofollow noopener noreferer noreferrer external" aria-label="Twitter" alt="旁路攻击：一道典型题的分析" title="旁路攻击：一道典型题的分析"><i class="fa fa-twitter">&nbsp;</i></a><a href="https://blog.pka.moe/atom.xml" target="_blank" rel="internal follow bookmark" aria-label="RSS" alt="旁路攻击：一道典型题的分析" title="旁路攻击：一道典型题的分析"><i class="fa fa-rss">&nbsp;</i></a></li></ul><div class="visible-lg visible-md visible-sm site-nav-footer"><br class="site-nav-footer-br"><footer><p>©&nbsp;2019-2023&nbsp;<a target="_blank" href="https://pka.moe" rel="internal follow bookmark" alt="旁路攻击：一道典型题的分析" title="旁路攻击：一道典型题的分析">Papersnake</a></p><p>Theme&nbsp;<a target="_blank" href="https://github.com/SumiMakito/hexo-theme-typography" rel="nofollow noopener noreferer noreferrer external" alt="旁路攻击：一道典型题的分析" title="旁路攻击：一道典型题的分析">Typography</a>&nbsp;by&nbsp;<a target="_blank" href="https://www.keep.moe" rel="nofollow noopener noreferer noreferrer external" alt="旁路攻击：一道典型题的分析" title="旁路攻击：一道典型题的分析">Makito</a></p><p>Proudly published with&nbsp;<a target="_blank" href="https://hexo.io" rel="nofollow noopener noreferer noreferrer external" alt="旁路攻击：一道典型题的分析" title="旁路攻击：一道典型题的分析">Hexo</a></p></footer></div></div></div><div class="col-sm-9 col-xs-12 main-container invisible" id="main-container"><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post-container"><p class="post-title"><a><ciallo></ciallo>旁路攻击：一道典型题的分析</a></p><p class="post-meta"><span class="date meta-item">发布于&nbsp;2020-07-29</span><span class="meta-item"><i class="fa fa-folder"></i><span>&nbsp;</span><a class="a-tag" href="/categories/CTF/" title="CTF">CTF</a><span>&nbsp;</span></span><span class="meta-item"><i class="fa fa-tag"></i><span>&nbsp;</span><a class="a-tag" href="/tags/PWN/" title="PWN">PWN</a><span>&nbsp;</span></span></p><p class="post-meta">本文共计&nbsp;<span class="post-count">1.3k</span>&nbsp;字，预计阅读时长&nbsp;<span class="post-count">7</span>&nbsp;分钟，被阅读&nbsp;<span id="ArtalkPV"></span>&nbsp;次。</p><p class="post-abstract"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"></p><p>分析 <strong>side-channel attack</strong> 的典型题 <a target="_blank" rel="nofollow noopener noreferer noreferrer external" href="https://github.com/ctfs/write-ups-2015/tree/master/csaw-ctf-2015/reverse/wyvern-500" alt="旁路攻击：一道典型题的分析" title="旁路攻击：一道典型题的分析">CSAW CTF 2015 - wyvern</a>。</p><span id="more"></span><h2><span id="csaw-quals-2015-wyvern-500">CSAW QUALS 2015: wyvern-500</span></h2><p><strong>Category:</strong> Reversing <strong>Points:</strong> 500 <strong>Solves:</strong> 96 <strong>Description:</strong></p><blockquote><p>There’s a dragon afoot, we need a hero. Give us the dragon’s secret and we’ll give you a flag.HINT: static is only 1 of 2 methods to RE. IDA torrent unnecessary</p><p><a target="_blank" rel="nofollow noopener noreferer noreferrer external" href="https://github.com/ctfs/write-ups-2015/blob/master/csaw-ctf-2015/reverse/wyvern-500/wyvern_c85f1be480808a9da350faaa6104a19b" alt="旁路攻击：一道典型题的分析" title="旁路攻击：一道典型题的分析"><span id="inline-blue">下载文件</span></a></p></blockquote><p>程序是 C++<ciallo></ciallo>写的 64 位 ELF，运行时需要输入 secret 验证，然后输出验证结果。</p><pre><code class="basic">+-----------------------+
+|    Welcome Hero       |
++-----------------------+
+
+[!] Quest: there is a dragon prowling the domain.
+        brute strength and magic is our only hope. Test your skill.
+
+Enter the dragon's secret: flag
+
+[-] You have failed. The dragon's power, speed and intelligence was greater.
+</code></pre><p>使用 IDA Pro 反编译，查看伪码，注意到关键语句：</p><pre><code class="c">std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_100);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_214);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_266);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_369);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_417);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_527);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_622);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_733);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_847);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_942);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_1054);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_1106);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_1222);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_1336);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_1441);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_1540);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_1589);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_1686);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_1796);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_1891);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_1996);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_2112);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_2165);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_2260);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_2336);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_2412);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_2498);
+std::vector&lt;int,std::allocator&lt;int&gt;&gt;::push_back(&amp;hero, &amp;secret_2575);
+v6 = std::string::length(v11) - 1LL != legend &gt;&gt; 2;
+</code></pre><h2><span id="思路一找规律">思路一：找规律</span></h2><p>观察到 <code>secret_\d*</code> 字段中的数字每次相差不大，且 100 正好是 d（dragon 首字母） 的 ASCII 符号，所以猜测 secret 为数字差代表的 ASCII。（<a target="_blank" rel="nofollow noopener noreferer noreferrer external" href="https://ohaithe.re/post/129657401392/csaw-quals-2015-reversing-500-wyvern" alt="旁路攻击：一道典型题的分析" title="旁路攻击：一道典型题的分析">这篇文章</a> 从伪码中直接读出了加密方法）</p><pre><code class="c">a = [0,100,214,266,369,417,527,622,733,847,942,1054,1106,1222,1336,1441,1540,1589,1686,1796,1891,1996,2112,2165,2260,2336,2412,2498,2575]
+for i in range(1,len(a)):
+    print(chr(a[i]-a[i-1]),end="")
+</code></pre><p>得到结果 dr4g0n_or_p4tric1an_it5_LLVM</p><h2><span id="思路二side-channel-attack">思路二：side-channel attack</span></h2><p>legend 的值为初始的 0x73 ，故结果长度为 legend &gt;&gt; 2 = 28，观察发现（或者直接假设）检查函数会将输入的字符一个个检测，一旦错误就直接退出，因此前几位正确的 secret 执行的指令更多。通过外部工具观察执行指令次数来破解 secret。</p><h3><span id="pintools">Pintools</span></h3><p><ciallo></ciallo>工具使用 Intel 的 <a target="_blank" rel="nofollow noopener noreferer noreferrer external" href="https://software.intel.com/en-us/articles/pin-a-dynamic-binary-instrumentation-tool" alt="旁路攻击：一道典型题的分析" title="旁路攻击：一道典型题的分析">Pintools</a> 中 inscount0.so 模块，代码如下：</p><pre><code class="python">import os
+import re
+flag = ''
+chars = []
+for i in range(47,58):
+    chars.append(chr(i))
+for i in range(65,91):
+    chars.append(chr(i))
+for i in range(97,123):
+    chars.append(chr(i))
+chars.append('@')
+chars.append('_')
+move = True
+cur_max = 0
+while(move):
+    move = False
+    for c in chars:
+        s = flag + c
+        s = s.ljust(28,'A') #补全 28 位
+        cmd = os.popen("echo '%s' | ../../../../pin -t inscount0.so -- /root/pwn/wyvern;cat ./inscount.out" % s).read()
+        cnt = int(re.search("Count ([0-9]*)", cmd).group(1)) #统计指令数量
+        if c=='/':
+            cur_max = max(cnt,cur_max)
+        if cnt &gt; cur_max:
+            print(s)
+            flag = flag + c
+            cur_max = cnt
+            move = True
+            index = 0
+            break
+print("flag:")
+print(flag)
+</code></pre><p>（思路来自 <a target="_blank" rel="nofollow noopener noreferer noreferrer external" href="https://bruce30262.github.io/csaw-ctf-2015-wyvern/" alt="旁路攻击：一道典型题的分析" title="旁路攻击：一道典型题的分析">这篇文章</a>）</p><h2><span id="ltrace">ltrace</span></h2><p>strace 用来跟踪一个进程的系统调用或信号产生的情况，ltrace 用来跟踪进程调用库函数的情况。</p><p>思路和使用 Pin 工具一致，实现更加简洁，速度也更快（代码来自 <a target="_blank" rel="nofollow noopener noreferer noreferrer external" href="https://gist.github.com/inaz2/1682e7254b1c7a2cf641" alt="旁路攻击：一道典型题的分析" title="旁路攻击：一道典型题的分析">inaz2</a>）。</p><pre><code class="python">from subprocess import Popen, PIPE
+
+secret_length = None
+
+for i in xrange(40):
+        p = Popen(['ltrace', './wyvern'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        line = 'A' * i + '\\n'
+        stdout, stderr = p.communicate(line)
+        num_lines = len(stderr.split('\\n'))
+        if num_lines != 42:
+                secret_length = i
+                break
+
+print "[+] secret length = %d" % secret_length
+
+secret = bytearray('A' * i)
+for i in xrange(secret_length):
+        results = []
+        for c in xrange(0x20, 0x7f):
+                p = Popen(['ltrace', './wyvern'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+                secret[i] = chr(c)
+                line = str(secret) + '\\n'
+                stdout, stderr = p.communicate(line)
+                num_lines = len(stderr.split('\\n'))
+                results.append((num_lines, secret[i]))
+        results.sort(reverse=True)
+        secret[i] = results[0][1]
+        print "[+] secret = %s" % str(secret)
+</code></pre><p>可以很快得到结果。</p><pre><code class="bash">[+] secret length = 28
+[+] secret = dAAAAAAAAAAAAAAAAAAAAAAAAAAA
+[+] secret = drAAAAAAAAAAAAAAAAAAAAAAAAAA
+[+] secret = dr4AAAAAAAAAAAAAAAAAAAAAAAAA
+[+] secret = dr4gAAAAAAAAAAAAAAAAAAAAAAAA
+[+] secret = dr4g0AAAAAAAAAAAAAAAAAAAAAAA
+[+] secret = dr4g0nAAAAAAAAAAAAAAAAAAAAAA
+[+] secret = dr4g0n_AAAAAAAAAAAAAAAAAAAAA
+[+] secret = dr4g0n_oAAAAAAAAAAAAAAAAAAAA
+[+] secret = dr4g0n_orAAAAAAAAAAAAAAAAAAA
+[+] secret = dr4g0n_or_AAAAAAAAAAAAAAAAAA
+[+] secret = dr4g0n_or_pAAAAAAAAAAAAAAAAA
+[+] secret = dr4g0n_or_p4AAAAAAAAAAAAAAAA
+[+] secret = dr4g0n_or_p4tAAAAAAAAAAAAAAA
+[+] secret = dr4g0n_or_p4trAAAAAAAAAAAAAA
+[+] secret = dr4g0n_or_p4triAAAAAAAAAAAAA
+[+] secret = dr4g0n_or_p4tricAAAAAAAAAAAA
+[+] secret = dr4g0n_or_p4tric1AAAAAAAAAAA
+[+] secret = dr4g0n_or_p4tric1aAAAAAAAAAA
+[+] secret = dr4g0n_or_p4tric1anAAAAAAAAA
+[+] secret = dr4g0n_or_p4tric1an_AAAAAAAA
+[+] secret = dr4g0n_or_p4tric1an_iAAAAAAA
+[+] secret = dr4g0n_or_p4tric1an_itAAAAAA
+[+] secret = dr4g0n_or_p4tric1an_it5AAAAA
+[+] secret = dr4g0n_or_p4tric1an_it5_AAAA
+[+] secret = dr4g0n_or_p4tric1an_it5_LAAA
+[+] secret = dr4g0n_or_p4tric1an_it5_LLAA
+[+] secret = dr4g0n_or_p4tric1an_it5_LLVA
+[+] secret = dr4g0n_or_p4tric1an_it5_LLVM
+</code></pre><p>最后将 secret 输入，得到 flag：</p><pre><code class="bash">+-----------------------+
+|    Welcome Hero       |
++-----------------------+
+
+[!] Quest: there is a dragon prowling the domain.
+        brute strength and magic is our only hope. Test your skill.
+
+Enter the dragon's secret: dr4g0n_or_p4tric1an_it5_LLVM
+success
+
+[+] A great success! Here is a flag{dr4g0n_or_p4tric1an_it5_LLVM}
+</code></pre><p></p></div><div class="pagination" style="width:100%"><p class="clearfix"><span>&nbsp;</span><span class="next pagbuttons" style="float:right"><a role="navigation" href="/python-skills/" title="Python 常用技巧">下一篇: Python 常用技巧&nbsp;<i class="fa fa-angle-double-right"></i></a></span></p></div><div id="comments"></div><script src="//cdn.staticfile.org/artalk/2.4.4/Artalk.min.js"></script><script>var artalk=new Artalk({el:"#comments",pageKey:"https://blog.pka.moe/side-channel-attack/",pageTitle:"旁路攻击：一道典型题的分析",server:"https://talk.lo-li.co",site:"纸蛇的博客",locale:"auto"})</script></div></div></div><div class="visible-xs site-bottom-footer"><footer><p>©&nbsp;2019-2023&nbsp;<a target="_blank" href="https://pka.moe" rel="internal follow bookmark" alt="旁路攻击：一道典型题的分析" title="旁路攻击：一道典型题的分析">Papersnake</a></p><p>Theme&nbsp;<a target="_blank" href="https://github.com/SumiMakito/hexo-theme-typography" rel="nofollow noopener noreferer noreferrer external" alt="旁路攻击：一道典型题的分析" title="旁路攻击：一道典型题的分析">Typography</a>&nbsp;by&nbsp;<a target="_blank" href="https://www.keep.moe" rel="nofollow noopener noreferer noreferrer external" alt="旁路攻击：一道典型题的分析" title="旁路攻击：一道典型题的分析">Makito</a></p><p>Proudly published with&nbsp;<a target="_blank" href="https://hexo.io" rel="nofollow noopener noreferer noreferrer external" alt="旁路攻击：一道典型题的分析" title="旁路攻击：一道典型题的分析">Hexo</a></p></footer></div></div></div></div><script src="//cdn.staticfile.org/jquery/3.6.3/jquery.min.js"></script><script src="//cdn.staticfile.org/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script><script src="//cdn.staticfile.org/jquery-migrate/3.4.0/jquery-migrate.min.js"></script><script src="//cdn.staticfile.org/jquery-appear/0.1/jquery.appear.min.js"></script><script src="/js/typography.js"></script><script src="//cdn.staticfile.org/highlight.js/11.7.0/highlight.min.js"></script><script>hljs.highlightAll()</script><script>function hitokoto(){$("#hitokoto").html("&nbsp;"),$.get("https://v1.hitokoto.cn/?max_length=15",{},(function(o){$("#hitokoto").html(o.hitokoto)}),"JSON")}hitokoto()</script><script>Math.random()<.5&&$("head").append("<style>body::before{transform: rotateY(180deg) !important;background-position: right bottom !important}</style>")</script></body></html>

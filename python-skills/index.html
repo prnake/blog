@@ -1,0 +1,98 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><meta name="author"><title>Python 常用技巧 · 纸蛇</title><meta name="description" content="在 Leetcode 上划水写写 Python3 ，主要追求程序的简洁和实现的精巧。"><meta name="og:description" content="在 Leetcode 上划水写写 Python3 ，主要追求程序的简洁和实现的精巧。"><meta name="twitter:site" content="纸蛇"><meta name="twitter:title" content="Python 常用技巧"><meta name="twitter:card" content="summary"><meta name="keywords" content="纸蛇,Papersnake,blog"><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png"><link rel="manifest" href="/images/site.webmanifest"><link rel="shortcut icon" href="/images/favicon.svg"><meta name="msapplication-config" content="/images/browserconfig.xml"><meta name="theme-color" content="#ffffff"><link rel="stylesheet" href="//cdn.staticfile.org/twitter-bootstrap/3.4.1/css/bootstrap.min.css"><link rel="stylesheet " href="//cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css"><link rel="stylesheet " href="//cdn.staticfile.org/artalk/2.4.4/Artalk.min.css"><link rel="stylesheet" href="//cdn.staticfile.org/highlight.js/11.7.0/styles/base16/tomorrow.min.css"><link rel="stylesheet" href="/css/style.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"><style>body ciallo:after{content:' ';display:inline;font-family:inherit;font-size:.45em}html .tag-list-item ciallo,html code ciallo,html kbd ciallo,html pre ciallo,html ruby ciallo,html samp ciallo{display:none}html ol>ciallo,html ul>ciallo{display:none}</style><meta name="generator" content="Hexo 6.3.0"><style>mjx-container[jax=SVG]{direction:ltr}mjx-container[jax=SVG]>svg{overflow:visible}mjx-container[jax=SVG][display=true]{display:block;text-align:center;margin:1em 0}mjx-container[jax=SVG][justify=left]{text-align:left}mjx-container[jax=SVG][justify=right]{text-align:right}g[data-mml-node=merror]>g{fill:red;stroke:red}g[data-mml-node=merror]>rect[data-background]{fill:yellow;stroke:none}g[data-mml-node=mtable]>line[data-line]{stroke-width:70px;fill:none}g[data-mml-node=mtable]>rect[data-frame]{stroke-width:70px;fill:none}g[data-mml-node=mtable]>.mjx-dashed{stroke-dasharray:140}g[data-mml-node=mtable]>.mjx-dotted{stroke-linecap:round;stroke-dasharray:0,140}g[data-mml-node=mtable]>svg{overflow:visible}[jax=SVG] mjx-tool{display:inline-block;position:relative;width:0;height:0}[jax=SVG] mjx-tool>mjx-tip{position:absolute;top:0;left:0}mjx-tool>mjx-tip{display:inline-block;padding:.2em;border:1px solid #888;font-size:70%;background-color:#f8f8f8;color:#000;box-shadow:2px 2px 5px #aaa}g[data-mml-node=maction][data-toggle]{cursor:pointer}mjx-status{display:block;position:fixed;left:1em;bottom:1em;min-width:25%;padding:.2em .4em;border:1px solid #888;font-size:90%;background-color:#f8f8f8;color:#000}foreignObject[data-mjx-xml]{font-family:initial;line-height:normal;overflow:visible}.MathJax path{stroke-width:3}mjx-container[display=true]{overflow:auto hidden}mjx-container[display=true]+br{display:none}</style><script type="application/ld+json" id="hexo-seo-schema">[
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": "https://developers.google.com/search/docs/advanced/structured-data/breadcrumb",
+    "name": "breadcrumb",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "item": "https://blog.pka.moe/tags/python/",
+        "name": "python"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "item": "https://blog.pka.moe/categories/Coding/",
+        "name": "Coding"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "item": "https://blog.pka.moe/python-skills/",
+        "name": "Python 常用技巧"
+      }
+    ]
+  }
+]</script><link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml"></head><body><div class="container" id="stage"><div class="row"><div class="col-sm-3 col-xs-12 side-container invisible" id="side-bar"><div class="vertical-text site-title"><h3 class="site-title-small" tabindex="-1"><a class="a-title" id="hitokoto" href="/">Papersnake</a></h3><h1 class="site-title-large" tabindex="-1"><a class="a-title" href="/"><ciallo></ciallo>纸蛇</a></h1></div><br class="visible-lg visible-md visible-sm"><div class="site-title-links" id="site-nav"><ul><li><a href="/">首页</a></li><li><a href="/archives">归档</a></li><li><a href="/categories">分类</a></li><li><a href="/tags">标签</a></li><li><a href="/about.html">关于</a></li><li class="soc"><a href="https://github.com/prnake" target="_blank" rel="nofollow noopener noreferer noreferrer external" aria-label="Github" alt="Python 常用技巧" title="Python 常用技巧"><i class="fa fa-github">&nbsp;</i></a><a href="https://twitter.com/papersnake" target="_blank" rel="nofollow noopener noreferer noreferrer external" aria-label="Twitter" alt="Python 常用技巧" title="Python 常用技巧"><i class="fa fa-twitter">&nbsp;</i></a><a href="https://blog.pka.moe/atom.xml" target="_blank" rel="internal follow bookmark" aria-label="RSS" alt="Python 常用技巧" title="Python 常用技巧"><i class="fa fa-rss">&nbsp;</i></a></li></ul><div class="visible-lg visible-md visible-sm site-nav-footer"><br class="site-nav-footer-br"><footer><p>©&nbsp;2019-2023&nbsp;<a target="_blank" href="https://pka.moe" rel="internal follow bookmark" alt="Python 常用技巧" title="Python 常用技巧">Papersnake</a></p><p>Theme&nbsp;<a target="_blank" href="https://github.com/SumiMakito/hexo-theme-typography" rel="nofollow noopener noreferer noreferrer external" alt="Python 常用技巧" title="Python 常用技巧">Typography</a>&nbsp;by&nbsp;<a target="_blank" href="https://www.keep.moe" rel="nofollow noopener noreferer noreferrer external" alt="Python 常用技巧" title="Python 常用技巧">Makito</a></p><p>Proudly published with&nbsp;<a target="_blank" href="https://hexo.io" rel="nofollow noopener noreferer noreferrer external" alt="Python 常用技巧" title="Python 常用技巧">Hexo</a></p></footer></div></div></div><div class="col-sm-9 col-xs-12 main-container invisible" id="main-container"><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post-container"><p class="post-title"><a>Python 常用技巧</a></p><p class="post-meta"><span class="date meta-item">发布于&nbsp;2020-07-27</span><span class="meta-item"><i class="fa fa-folder"></i><span>&nbsp;</span><a class="a-tag" href="/categories/Coding/" title="Coding">Coding</a><span>&nbsp;</span></span><span class="meta-item"><i class="fa fa-tag"></i><span>&nbsp;</span><a class="a-tag" href="/tags/python/" title="python">python</a><span>&nbsp;</span></span></p><p class="post-meta">本文共计&nbsp;<span class="post-count">1.5k</span>&nbsp;字，预计阅读时长&nbsp;<span class="post-count">6</span>&nbsp;分钟，被阅读&nbsp;<span id="ArtalkPV"></span>&nbsp;次。</p><p class="post-abstract"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"></p><p>在 Leetcode 上划水写写 Python3 ，主要追求程序的简洁和实现的精巧。</p><span id="more"></span><ul><li><a href="#zen-of-python">Zen of Python</a></li><li><a href="#lru_cache">lru_cache</a><ul><li><a href="#509-%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91%E6%95%B0">509. 斐波那契数</a></li><li><a href="#329-%E7%9F%A9%E9%98%B5%E4%B8%AD%E7%9A%84%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E8%B7%AF%E5%BE%84">329. 矩阵中的最长递增路径</a></li><li><a href="#functools">functools</a></li></ul></li><li><a href="#%E4%BD%BF%E7%94%A8%E5%BC%82%E5%B8%B8%E6%8A%9B%E5%87%BA%E6%9C%BA%E5%88%B6%E8%A7%A3%E5%86%B3%E9%97%AE%E9%A2%98">使用异常抛出机制解决问题</a><ul><li><a href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%BC%82%E5%B8%B8">什么是异常？</a></li><li><a href="#%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86">异常处理</a></li><li><a href="#%E5%B7%A7%E7%94%A8%E5%BC%82%E5%B8%B8%E6%8A%9B%E5%87%BA%E6%9C%BA%E5%88%B6">巧用异常抛出机制</a></li><li><a href="#350-%E4%B8%A4%E4%B8%AA%E6%95%B0%E7%BB%84%E7%9A%84%E4%BA%A4%E9%9B%86-ii">350. 两个数组的交集 II</a></li></ul></li><li><a href="#%E8%BF%AD%E4%BB%A3%E5%99%A8-iter">迭代器 iter</a><ul><li><a href="#392-%E5%88%A4%E6%96%AD%E5%AD%90%E5%BA%8F%E5%88%97">392. 判断子序列</a></li></ul></li></ul><h2><span id="zen-of-python">Zen of Python</span></h2><blockquote><p><strong>生活的最好状态是冷冷清清的风风火火。 ——木心</strong></p></blockquote><pre><code class="python">&gt;&gt;&gt; import this
+The Zen of Python, by Tim Peters
+
+Beautiful is better than ugly.
+Explicit is better than implicit.
+Simple is better than complex.
+Complex is better than complicated.
+Flat is better than nested.
+Sparse is better than dense.
+Readability counts.
+Special cases aren't special enough to break the rules.
+Although practicality beats purity.
+Errors should never pass silently.
+Unless explicitly silenced.
+In the face of ambiguity, refuse the temptation to guess.
+There should be one-- and preferably only one --obvious way to do it.
+Although that way may not be obvious at first unless you're Dutch.
+Now is better than never.
+Although never is often better than *right* now.
+If the implementation is hard to explain, it's a bad idea.
+If the implementation is easy to explain, it may be a good idea.
+Namespaces are one honking great idea -- let's do more of those!
+</code></pre><h2><span id="lru_cache">lru_cache</span></h2><p><code>lru_cache</code> 属于 <code>functools</code> ，是一个为函数提供缓存功能的装饰器，利用的是 <a target="_blank" rel="nofollow noopener noreferer noreferrer external" href="https://en.wikipedia.org/wiki/Cache_algorithms#Examples" alt="Python 常用技巧" title="Python 常用技巧">最久未使用算法 (Least recently used)</a> 进行缓存。适合在<strong>需要重用之前计算结果，且函数参数可哈希</strong>的情况下使用。比如<strong>动态规划、记忆化搜索</strong>，可以减少存储计算结果的代码。</p><p>该函数的默认调用参数为<ciallo></ciallo><code>@functools.lru_cache(maxsize=128, typed=False)</code>。特别的，如果 <em>maxsize</em> 设为 <code>None</code>，LRU 特性将被禁用且缓存可无限增长。</p><h3><span id="509-斐波那契数">509. 斐波那契数<ciallo></ciallo></span></h3><pre><code class="python">class Solution:
+    @lru_cache(None)
+    def fib(self, N: int) -&gt; int:
+        if N &lt; 2:
+            return N
+        return self.fib(N-1) + self.fib(N-2)
+</code></pre><h3><span id="329-矩阵中的最长递增路径">329. 矩阵中的最长递增路径</span></h3><blockquote><p>给定一个整数矩阵，找出最长递增路径的长度。</p><p>对于每个单元格，你可以往上，下，左，右四个方向移动。 你不能在对角线方向上移动或移动到边界外（即不允许环绕）。</p></blockquote><p>直接使用 <code>dfs</code> + <code>lru_cache</code> ：</p><pre><code class="python">class Solution:
+    def longestIncreasingPath(self, matrix: List[List[int]]) -&gt; int:
+        @lru_cache(None)
+        def dfs(i,j):
+            res = 1
+            if i-1&gt;=0 and matrix[i-1][j]&gt;matrix[i][j]:
+                res=max(res,dfs(i-1,j)+1)
+            if i+1&lt;len(matrix) and matrix[i+1][j]&gt;matrix[i][j]:
+                res=max(res,dfs(i+1,j)+1)
+            if j-1&gt;=0 and matrix[i][j-1]&gt;matrix[i][j]:
+                res=max(res,dfs(i,j-1)+1)
+            if j+1&lt;len(matrix[0]) and matrix[i][j+1]&gt;matrix[i][j]:
+                res=max(res,dfs(i,j+1)+1)
+            return res
+        res = 0
+        for i in range(len(matrix)):
+            for j in range(len(matrix[0])):
+                res = max(res,dfs(i,j))
+        return res
+</code></pre><h3><span id="functools">functools</span></h3><blockquote><p><a target="_blank" rel="nofollow noopener noreferer noreferrer external" href="https://docs.python.org/zh-cn/3/library/functools.html#module-functools" alt="Python 常用技巧" title="Python 常用技巧"><code>functools</code></a> 模块应用于高阶函数，即参数或（和）返回值为其他函数的函数。 通常来说，此模块的功能适用于所有可调用对象。</p></blockquote><p>看起来还有很多的功能可以挖掘。</p><h2><span id="使用异常抛出机制解决问题">使用异常抛出机制解决问题</span></h2><h3><span id="什么是异常">什么是异常？</span></h3><ul><li>异常即是一个事件，该事件会在程序执行过程中发生，影响了程序的正常执行。</li><li>一般情况下，在 Python 无法正常处理程序时就会发生一个异常。</li><li>异常是 Python 对象，表示一个错误。</li><li>当 Python 脚本发生异常时我们需要捕获处理它，否则程序会终止执行。</li></ul><h3><span id="异常处理">异常处理</span></h3><p>捕捉异常可以使用 try/except 语句。</p><p>try/except 语句用来检测 try 语句块中的错误，从而让 except 语句捕获异常信息并处理。</p><p>如果你不想在异常发生时结束你的程序，只需在 try 里捕获它。</p><p>以下为简单的语法：</p><pre><code class="python">try:
+&lt;语句&gt;        #运行别的代码
+except &lt;名字&gt;：
+&lt;语句&gt;        #如果在 try 部份引发了'name'异常
+except &lt;名字&gt;，&lt;数据&gt;:
+&lt;语句&gt;        #如果引发了'name'异常，获得附加的数据
+else:
+&lt;语句&gt;        #如果没有异常发生
+</code></pre><p>try 的工作原理是，当开始一个 try 语句后，python 就在当前程序的上下文中作标记，这样当异常出现时就可以回到这里，try 子句先执行，接下来会发生什么依赖于执行时是否出现异常。</p><ul><li>如果当 try 后的语句执行时发生异常，python 就跳回到 try 并执行第一个匹配该异常的 except 子句，异常处理完毕，控制流就通过整个 try 语句（除非在处理异常时又引发新的异常）。</li><li>如果在 try 后的语句里发生了异常，却没有匹配的 except 子句，异常将被递交到上层的 try，或者到程序的最上层（这样将结束程序，并打印默认的出错信息）。</li><li>如果在 try 子句执行时没有发生异常，python 将执行 else 语句后的语句（如果有 else 的话），然后控制流通过整个 try 语句。</li></ul><h3><span id="巧用异常抛出机制">巧用异常抛出机制</span></h3><p>当遇到<strong>索引访问越界或者不被数据结构认可的处理方式</strong>时，可以采用 <code>try &amp; except</code> 语句减少合法性判断的代码。</p><h3><span id="350-两个数组的交集-ii">350. 两个数组的交集 II</span></h3><blockquote><p>给定两个数组，编写一个函数来计算它们的交集。</p></blockquote><pre><code class="python">class Solution:
+    def intersect(self, nums1: List[int], nums2: List[int]) -&gt; List[int]:
+        res = []
+        for num in nums1:
+            try:
+                nums2.remove(num)
+                res.append(num)
+            except:
+                continue
+        
+        return res
+</code></pre><h2><span id="迭代器-iter">迭代器 iter</span></h2><p><ciallo></ciallo>迭代器的好处是 <code>for in</code> 遍历时，迭代器自身也会移动，适合处理只需要使用一次的数据。</p><h3><span id="392-判断子序列">392. 判断子序列</span></h3><blockquote><p>给定字符串 s 和 t ，判断 s 是否为 t 的子序列。</p><p>你可以认为 s 和 t 中仅包含英文小写字母。字符串 t 可能会很长（长度 ~= 500,000），而 s 是个短字符串（长度 &lt;=100）。</p><p>字符串的一个子序列是原始字符串删除一些（也可以不删除）字符而不改变剩余字符相对位置形成的新字符串。（例如，”ace”<ciallo></ciallo>是”abcde”<ciallo></ciallo>的一个子序列，而”aec”<ciallo></ciallo>不是）。</p></blockquote><pre><code class="python">class Solution:
+    def isSubsequence(self, s: str, t: str) -&gt; bool:
+        t = iter(t)
+        return all(c in t for c in s) #t 在 c in t 的查找过程中不断右移
+</code></pre><p></p></div><div class="pagination" style="width:100%"><p class="clearfix"><span class="pre pagbuttons" style="float:left"><a role="navigation" href="/side-channel-attack/" title="旁路攻击：一道典型题的分析"><i class="fa fa-angle-double-left"></i>&nbsp;上一篇: 旁路攻击：一道典型题的分析</a></span><span>&nbsp;</span><span class="next pagbuttons" style="float:right"><a role="navigation" href="/hexo-deploy/" title="使用 Github Actions 将 Hexo 托管至腾讯云">下一篇: 使用 Github Actions 将 Hexo 托管至腾讯云&nbsp;<i class="fa fa-angle-double-right"></i></a></span></p></div><div id="comments"></div><script src="//cdn.staticfile.org/artalk/2.4.4/Artalk.min.js"></script><script>var artalk=new Artalk({el:"#comments",pageKey:"https://blog.pka.moe/python-skills/",pageTitle:"Python 常用技巧",server:"https://talk.lo-li.co",site:"纸蛇的博客",locale:"auto"})</script></div></div></div><div class="visible-xs site-bottom-footer"><footer><p>©&nbsp;2019-2023&nbsp;<a target="_blank" href="https://pka.moe" rel="internal follow bookmark" alt="Python 常用技巧" title="Python 常用技巧">Papersnake</a></p><p>Theme&nbsp;<a target="_blank" href="https://github.com/SumiMakito/hexo-theme-typography" rel="nofollow noopener noreferer noreferrer external" alt="Python 常用技巧" title="Python 常用技巧">Typography</a>&nbsp;by&nbsp;<a target="_blank" href="https://www.keep.moe" rel="nofollow noopener noreferer noreferrer external" alt="Python 常用技巧" title="Python 常用技巧">Makito</a></p><p>Proudly published with&nbsp;<a target="_blank" href="https://hexo.io" rel="nofollow noopener noreferer noreferrer external" alt="Python 常用技巧" title="Python 常用技巧">Hexo</a></p></footer></div></div></div></div><script src="//cdn.staticfile.org/jquery/3.6.3/jquery.min.js"></script><script src="//cdn.staticfile.org/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script><script src="//cdn.staticfile.org/jquery-migrate/3.4.0/jquery-migrate.min.js"></script><script src="//cdn.staticfile.org/jquery-appear/0.1/jquery.appear.min.js"></script><script src="/js/typography.js"></script><script src="//cdn.staticfile.org/highlight.js/11.7.0/highlight.min.js"></script><script>hljs.highlightAll()</script><script>function hitokoto(){$("#hitokoto").html("&nbsp;"),$.get("https://v1.hitokoto.cn/?max_length=15",{},(function(o){$("#hitokoto").html(o.hitokoto)}),"JSON")}hitokoto()</script><script>Math.random()<.5&&$("head").append("<style>body::before{transform: rotateY(180deg) !important;background-position: right bottom !important}</style>")</script></body></html>

@@ -1,0 +1,482 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><meta name="author"><title>Pthreads - 共享内存式编程 · 纸蛇</title><meta name="description" content="本文是在 Pthreads 学习过程中产生的入门级教程。"><meta name="og:description" content="本文是在 Pthreads 学习过程中产生的入门级教程。"><meta name="twitter:site" content="纸蛇"><meta name="twitter:title" content="Pthreads - 共享内存式编程"><meta name="twitter:card" content="summary"><meta name="keywords" content="纸蛇,Papersnake,blog"><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png"><link rel="manifest" href="/images/site.webmanifest"><link rel="shortcut icon" href="/images/favicon.svg"><meta name="msapplication-config" content="/images/browserconfig.xml"><meta name="theme-color" content="#ffffff"><link rel="stylesheet" href="//cdn.staticfile.org/twitter-bootstrap/3.4.1/css/bootstrap.min.css"><link rel="stylesheet " href="//cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css"><link rel="stylesheet " href="//cdn.staticfile.org/artalk/2.4.4/Artalk.min.css"><link rel="stylesheet" href="//cdn.staticfile.org/highlight.js/11.7.0/styles/base16/tomorrow.min.css"><link rel="stylesheet" href="/css/style.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"><style>body ciallo:after{content:' ';display:inline;font-family:inherit;font-size:.45em}html .tag-list-item ciallo,html code ciallo,html kbd ciallo,html pre ciallo,html ruby ciallo,html samp ciallo{display:none}html ol>ciallo,html ul>ciallo{display:none}</style><meta name="generator" content="Hexo 6.3.0"><style>mjx-container[jax=SVG]{direction:ltr}mjx-container[jax=SVG]>svg{overflow:visible}mjx-container[jax=SVG][display=true]{display:block;text-align:center;margin:1em 0}mjx-container[jax=SVG][justify=left]{text-align:left}mjx-container[jax=SVG][justify=right]{text-align:right}g[data-mml-node=merror]>g{fill:red;stroke:red}g[data-mml-node=merror]>rect[data-background]{fill:yellow;stroke:none}g[data-mml-node=mtable]>line[data-line]{stroke-width:70px;fill:none}g[data-mml-node=mtable]>rect[data-frame]{stroke-width:70px;fill:none}g[data-mml-node=mtable]>.mjx-dashed{stroke-dasharray:140}g[data-mml-node=mtable]>.mjx-dotted{stroke-linecap:round;stroke-dasharray:0,140}g[data-mml-node=mtable]>svg{overflow:visible}[jax=SVG] mjx-tool{display:inline-block;position:relative;width:0;height:0}[jax=SVG] mjx-tool>mjx-tip{position:absolute;top:0;left:0}mjx-tool>mjx-tip{display:inline-block;padding:.2em;border:1px solid #888;font-size:70%;background-color:#f8f8f8;color:#000;box-shadow:2px 2px 5px #aaa}g[data-mml-node=maction][data-toggle]{cursor:pointer}mjx-status{display:block;position:fixed;left:1em;bottom:1em;min-width:25%;padding:.2em .4em;border:1px solid #888;font-size:90%;background-color:#f8f8f8;color:#000}foreignObject[data-mjx-xml]{font-family:initial;line-height:normal;overflow:visible}.MathJax path{stroke-width:3}mjx-container[display=true]{overflow:auto hidden}mjx-container[display=true]+br{display:none}</style><script type="application/ld+json" id="hexo-seo-schema">[
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": "https://developers.google.com/search/docs/advanced/structured-data/breadcrumb",
+    "name": "breadcrumb",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "item": "https://blog.pka.moe/tags/Pthreads/",
+        "name": "Pthreads"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "item": "https://blog.pka.moe/tags/%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/",
+        "name": "并行编程"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "item": "https://blog.pka.moe/categories/Coding/",
+        "name": "Coding"
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "item": "https://blog.pka.moe/categories/Coding/CS/",
+        "name": "CS"
+      },
+      {
+        "@type": "ListItem",
+        "position": 5,
+        "item": "https://blog.pka.moe/pthreads/",
+        "name": "Pthreads - 共享内存式编程"
+      }
+    ]
+  }
+]</script><link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml"></head><body><div class="container" id="stage"><div class="row"><div class="col-sm-3 col-xs-12 side-container invisible" id="side-bar"><div class="vertical-text site-title"><h3 class="site-title-small" tabindex="-1"><a class="a-title" id="hitokoto" href="/">Papersnake</a></h3><h1 class="site-title-large" tabindex="-1"><a class="a-title" href="/"><ciallo></ciallo>纸蛇</a></h1></div><br class="visible-lg visible-md visible-sm"><div class="site-title-links" id="site-nav"><ul><li><a href="/">首页</a></li><li><a href="/archives">归档</a></li><li><a href="/categories">分类</a></li><li><a href="/tags">标签</a></li><li><a href="/about.html">关于</a></li><li class="soc"><a href="https://github.com/prnake" target="_blank" rel="nofollow noopener noreferer noreferrer external" aria-label="Github" alt="Pthreads - 共享内存式编程" title="Pthreads - 共享内存式编程"><i class="fa fa-github">&nbsp;</i></a><a href="https://twitter.com/papersnake" target="_blank" rel="nofollow noopener noreferer noreferrer external" aria-label="Twitter" alt="Pthreads - 共享内存式编程" title="Pthreads - 共享内存式编程"><i class="fa fa-twitter">&nbsp;</i></a><a href="https://blog.pka.moe/atom.xml" target="_blank" rel="internal follow bookmark" aria-label="RSS" alt="Pthreads - 共享内存式编程" title="Pthreads - 共享内存式编程"><i class="fa fa-rss">&nbsp;</i></a></li></ul><div class="visible-lg visible-md visible-sm site-nav-footer"><br class="site-nav-footer-br"><footer><p>©&nbsp;2019-2023&nbsp;<a target="_blank" href="https://pka.moe" rel="internal follow bookmark" alt="Pthreads - 共享内存式编程" title="Pthreads - 共享内存式编程">Papersnake</a></p><p>Theme&nbsp;<a target="_blank" href="https://github.com/SumiMakito/hexo-theme-typography" rel="nofollow noopener noreferer noreferrer external" alt="Pthreads - 共享内存式编程" title="Pthreads - 共享内存式编程">Typography</a>&nbsp;by&nbsp;<a target="_blank" href="https://www.keep.moe" rel="nofollow noopener noreferer noreferrer external" alt="Pthreads - 共享内存式编程" title="Pthreads - 共享内存式编程">Makito</a></p><p>Proudly published with&nbsp;<a target="_blank" href="https://hexo.io" rel="nofollow noopener noreferer noreferrer external" alt="Pthreads - 共享内存式编程" title="Pthreads - 共享内存式编程">Hexo</a></p></footer></div></div></div><div class="col-sm-9 col-xs-12 main-container invisible" id="main-container"><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post-container"><p class="post-title"><a>Pthreads - 共享内存式编程</a></p><p class="post-meta"><span class="date meta-item">发布于&nbsp;2020-04-05</span><span class="meta-item"><i class="fa fa-folder"></i><span>&nbsp;</span><a class="a-tag" href="/categories/Coding/" title="Coding">Coding</a><span>&nbsp;</span><a class="a-tag" href="/categories/Coding/CS/" title="CS">CS</a><span>&nbsp;</span></span><span class="meta-item"><i class="fa fa-tag"></i><span>&nbsp;</span><a class="a-tag" href="/tags/Pthreads/" title="Pthreads">Pthreads</a><span>&nbsp;</span><a class="a-tag" href="/tags/并行编程/" title="并行编程">并行编程</a><span>&nbsp;</span></span></p><p class="post-meta">本文共计&nbsp;<span class="post-count">7.2k</span>&nbsp;字，预计阅读时长&nbsp;<span class="post-count">32</span>&nbsp;分钟，被阅读&nbsp;<span id="ArtalkPV"></span>&nbsp;次。</p><p class="post-abstract"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"></p><p>本文是在 Pthreads 学习过程中产生的入门级教程。</p><span id="more"></span><ul><li><a href="#%E5%BC%95%E5%85%A5">引入</a><ul><li><a href="#helloworld">hello,world</a></li><li><a href="#%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95">矩阵乘法</a></li></ul></li><li><a href="#%CF%80%E7%9A%84%E8%AE%A1%E7%AE%97">π的计算</a><ul><li><a href="#%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E6%96%B9%E6%B3%95">蒙特卡洛方法</a></li><li><a href="#%CF%80%E7%9A%84%E8%8E%B1%E5%B8%83%E5%B0%BC%E8%8C%A8%E5%85%AC%E5%BC%8F">π的莱布尼茨公式</a></li><li><a href="#%E5%8F%8D%E6%AD%A3%E5%88%87%E7%BA%A7%E6%95%B0%E6%AC%A7%E6%8B%89%E5%8F%98%E6%8D%A2">反正切级数欧拉变换</a></li></ul></li><li><a href="#%E4%BF%A1%E5%8F%B7%E9%87%8Fsemaphore">信号量（semaphore）</a><ul><li><a href="#%E4%BB%8B%E7%BB%8D">介绍</a></li><li><a href="#%E7%94%9F%E4%BA%A7%E8%80%85-%E6%B6%88%E8%B4%B9%E8%80%85%E5%90%8C%E6%AD%A5%E6%A8%A1%E5%9E%8B">生产者-消费者同步模型</a><ul><li><a href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%94%9F%E4%BA%A7%E8%80%85-%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%9E%8B">什么是生产者-消费者模型</a></li><li><a href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BD%BF%E7%94%A8%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%9E%8B">为什么要使用生产者消费者模型</a></li><li><a href="#%E7%94%9F%E4%BA%A7%E8%80%85-%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%9E%8B%E7%9A%84%E7%89%B9%E7%82%B9">生产者-消费者模型的特点</a></li><li><a href="#%E7%94%9F%E4%BA%A7%E8%80%85-%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E7%94%9F%E4%BA%A7%E8%80%85-%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF">生产者-消费者模型的应用场景生产者-消费者模型的应用场景</a></li><li><a href="#%E7%94%9F%E4%BA%A7%E8%80%85-%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%9E%8B%E7%9A%84%E4%BC%98%E7%82%B9">生产者-消费者模型的优点</a></li></ul></li></ul></li><li><a href="#%E4%BA%92%E6%96%A5%E9%87%8F%E5%92%8C%E4%BF%A1%E5%8F%B7%E9%87%8F%E7%9A%84%E6%AF%94%E8%BE%83">互斥量和信号量的比较</a><ul><li><a href="#%E4%BA%92%E6%96%A5%E9%87%8F%E5%92%8C%E4%BF%A1%E5%8F%B7%E9%87%8F%E7%9A%84%E5%8C%BA%E5%88%AB">互斥量和信号量的区别</a></li><li><a href="#%E7%94%A8%E4%BA%92%E6%96%A5%E9%87%8F%E5%AE%9E%E7%8E%B0%E7%94%9F%E4%BA%A7%E8%80%85-%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%9E%8B">用互斥量实现生产者-消费者模型</a></li></ul></li><li><a href="#%E8%B7%AF%E9%9A%9C%E5%92%8C%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F">路障和条件变量</a></li><li><a href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E9%93%BE%E8%A1%A8%E5%92%8C-pthreads-%E8%AF%BB%E5%86%99%E9%94%81">多线程链表和 Pthreads 读写锁</a><ul><li><a href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E9%93%BE%E8%A1%A8%E7%9A%84%E4%B8%8D%E5%90%8C%E5%AE%9E%E7%8E%B0">多线程链表的不同实现</a></li><li><a href="#%E4%B8%8D%E5%90%8C%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E7%9A%84%E5%BC%80%E9%94%80%E5%88%86%E6%9E%90">不同实现方案的开销分析</a></li></ul></li><li><a href="#%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7">线程安全性</a><ul><li><a href="#thread-safe-c-library-functions">Thread-safe C library functions</a></li><li><a href="#c-library-functions-that-are-not-thread-safe">C library functions that are not thread-safe</a></li></ul></li><li><a href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99">参考资料</a></li></ul><h2><span id="引入">引入<ciallo></ciallo></span></h2><h3><span id="helloworld">hello,world</span></h3><p><ciallo></ciallo>这是一个标准的”hello,world”<ciallo></ciallo>程序：</p><pre><code class="cpp">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;pthread.h&gt; 
+const int MAX_THREADS = 64;
+
+/* Global variable:  accessible to all threads */
+int thread_count;  
+
+void Usage(char* prog_name);
+void *Hello(void* rank);  /* Thread function */
+
+/*--------------------------------------------------------------------*/
+int main(int argc, char* argv[]) {
+     long       thread;  /* Use long in case of a 64-bit system */
+     pthread_t* thread_handles; 
+
+     /* Get number of threads from command line */
+     if (argc != 2) Usage(argv[0]);
+     thread_count = strtol(argv[1], NULL, 10);  
+     if (thread_count &lt;= 0 || thread_count &gt; MAX_THREADS) Usage(argv[0]);
+
+     thread_handles = malloc (thread_count*sizeof(pthread_t)); 
+
+     for (thread = 0; thread &lt; thread_count; thread++)  
+    pthread_create(&amp;thread_handles[thread], NULL,
+    Hello, (void*) thread);  
+
+     printf("Hello from the main thread\n");
+
+     for (thread = 0; thread &lt; thread_count; thread++) 
+    pthread_join(thread_handles[thread], NULL); 
+
+     free(thread_handles);
+     return 0;
+}  /* main */
+
+/*-------------------------------------------------------------------*/
+void *Hello(void* rank) {
+     long my_rank = (long) rank;  /* Use long in case of 64-bit system */ 
+
+     printf("Hello from thread %ld of %d\n", my_rank, thread_count);
+
+     return NULL;
+}  /* Hello */
+
+/*-------------------------------------------------------------------*/
+void Usage(char* prog_name) {
+     fprintf(stderr, "usage: %s &lt;number of threads&gt;\n", prog_name);
+     fprintf(stderr, "0 &lt; number of threads &lt;= %d\n", MAX_THREADS);
+     exit(0);
+}  /* Usage */
+</code></pre><p>核心代码：</p><pre><code class="cpp">    #include <pthread.h> //<ciallo></ciallo>引入，编译时加条件 -lpthread
+    void *Hello(void* rank);
+    long       thread;  
+    pthread_t* thread_handles; 
+    thread_handles = malloc (thread_count*sizeof(pthread_t));
+    pthread_create(&amp;thread_handles[thread], NULL,
+      Hello, (void*) thread); 
+    pthread_join(thread_handles[thread], NULL); 
+</pthread.h></code></pre><p>注意 pthread_create 调用函数必须是<ciallo></ciallo>** void *<ciallo></ciallo>类型<strong>，pthread_create 创建的线程可以直接运行（接收系统调度），pthread_join 用于接收线程的</strong>返回值<ciallo></ciallo>**。</p><h3><span id="矩阵乘法">矩阵乘法</span></h3><p>总体来说 Pthread 比 OpenMpi 要清爽，不考虑线程之间的通讯的话代码量少很多，更好理解。</p><p>就矩阵乘法来说，数据保存都在全局变量不需要传递，只需要传递线程编号 rank 即可，Pthread 核心调用和 “hello,world” 一模一样。</p><pre><code>for (thread = 0; thread &lt; thread_count; thread++)
+      pthread_create(&amp;thread_handles[thread], NULL,
+         Pth_mat_vect, (void*) thread);
+
+for (thread = 0; thread &lt; thread_count; thread++)
+      pthread_join(thread_handles[thread], NULL);
+</code></pre><h2><span id="π的计算">π的计算</span></h2><p>这算是第一个实用并且比较重要的例子。π的算法很多，这里的计算只是要测试代码能力，不纠结算法效率的差异。</p><p>与矩阵乘法不太一样，这里用到的方法可能会对相同的全局变量同时做读写操作，同时的访问，称为<ciallo></ciallo>**<ciallo></ciallo>竞争条件 (race conditions)**，可能导致结果出错，因此需要使用一定的机制避免——我们引入忙等待和互斥量。</p><p><img src="/images/pthreads1.png" alt="忙等待和互斥量"></p><h3><span id="蒙特卡洛方法">蒙特卡洛方法</span></h3><p>参考：<a target="_blank" rel="nofollow noopener noreferer noreferrer external" href="https://www.cnblogs.com/sdxk/p/4093484.html" alt="Pthreads - 共享内存式编程" title="Pthreads - 共享内存式编程">蒙特卡洛方法计算圆周率的三种实现</a></p><p>蒙特卡洛方法实现计算圆周率的方法比较简单，其思想是假设我们向一个正方形的标靶上随机投掷飞镖，靶心在正中央，标靶的长和宽都是 2 英尺。同时假设有一个圆与标靶内切。圆的半径是 1 英尺，面积是π平方英尺。如果击中点在标靶上是均匀分布的（我们总会击中正方形），那么飞镖击中圆的数量近似满足等式：</p><p>飞镖落在圆内的次数<ciallo></ciallo>/<ciallo></ciallo>飞镖落在标靶内的总次数<ciallo></ciallo>=π/4</p><p>我们可以用这个公式和随机数产生器来估计π的值。</p><pre><code>#include&lt;stdlib.h&gt;
+#include&lt;stdio.h&gt;
+#include&lt;math.h&gt;
+#include&lt;pthread.h&gt;
+int thread_count;
+long long int num_in_circle,n;
+pthread_mutex_t mutex;
+void* compute_pi(void* rank);
+int main(int argc,char* argv[]){
+    long    thread;
+    pthread_t* thread_handles;
+    thread_count=strtol(argv[1],NULL,10);
+    printf("please input the number of point\n");
+    scanf("%lld",&amp;n);
+    thread_handles=(pthread_t*)malloc(thread_count*sizeof(pthread_t));
+    pthread_mutex_init(&amp;mutex,NULL);
+    for(thread=0;thread&lt;thread_count;thread++)
+        pthread_create(&amp;thread_handles[thread],NULL,compute_pi,(void*)thread);
+    for(thread=0;thread&lt;thread_count;thread++)
+        pthread_join(thread_handles[thread],NULL);
+    pthread_mutex_destroy(&amp;mutex);
+    double pi=4*(double)num_in_circle/(double)n;
+    printf("The esitimate value of pi is %lf\n",pi);
+}
+void* compute_pi(void* rank){
+    long long int local_n;
+    local_n=n/thread_count;
+    double x,y,distance_squared;
+    for(long long int i=0;i&lt;local_n;i++){
+        x=(double)rand()/(double)RAND_MAX;
+        y=(double)rand()/(double)RAND_MAX;
+        distance_squared=x*x+y*y;
+        if(distance_squared&lt;=1){
+            pthread_mutex_lock(&amp;mutex);
+            num_in_circle++;
+            pthread_mutex_unlock(&amp;mutex);    
+        }
+    }
+    return NULL;
+}
+</code></pre><p>计数的核心代码为：</p><pre><code>//pthread_mutex_t mutex; //<ciallo></ciallo>记得全局
+//pthread_mutex_init(&amp;mutex,NULL);
+pthread_mutex_lock(&amp;mutex);
+num_in_circle++;
+pthread_mutex_unlock(&amp;mutex);  
+//pthread_mutex_destroy(&amp;mutex);
+</code></pre><p>我们希望一个线程执行<ciallo></ciallo><code>num_in_circle++;</code>时，其他线程不能操作，这段代码被称为<strong>临界区</strong>。</p><p>mutex 为 Pthread 定义的<strong>互斥量（互斥锁</strong>），其作用与更加直观的<strong>忙等待</strong>效果类似：</p><pre><code>while(flag!=my_rank);
+num_in_circle++;
+flag = (flag+1)% thread_count;
+</code></pre><p>但显然，<strong>互斥量</strong>的作用机制不需要依赖次序，因此使用互斥量效率更高。尤其当创建线程多于系统并行进程数时，<strong>忙等待</strong>可能和系统调度冲突造成短暂阻塞。</p><p>注意，无法通过以下代码实现<strong>互斥量</strong>功能：</p><pre><code>//int flag = 1;
+while(flag!=1);
+flag = 0;
+num_in_circle++;
+flag = 1;
+</code></pre><p>因为对 flag 的赋值操作自身就可能造成<strong>竞争条件</strong>，导致非预期结果。</p><h3><span id="π的莱布尼茨公式">π的莱布尼茨公式</span></h3><p>由<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align:-.912ex" xmlns="http://www.w3.org/2000/svg" width="16.357ex" height="3.281ex" role="img" focusable="false" viewBox="0 -1047.1 7229.7 1450.1"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mfrac"><g data-mml-node="mi" transform="translate(220,394) scale(0.707)"><path data-c="1D70B" d="M132 -11Q98 -11 98 22V33L111 61Q186 219 220 334L228 358H196Q158 358 142 355T103 336Q92 329 81 318T62 297T53 285Q51 284 38 284Q19 284 19 294Q19 300 38 329T93 391T164 429Q171 431 389 431Q549 431 553 430Q573 423 573 402Q573 371 541 360Q535 358 472 358H408L405 341Q393 269 393 222Q393 170 402 129T421 65T431 37Q431 20 417 5T381 -10Q370 -10 363 -7T347 17T331 77Q330 86 330 121Q330 170 339 226T357 318T367 358H269L268 354Q268 351 249 275T206 114T175 17Q164 -11 132 -11Z"></path></g><g data-mml-node="mn" transform="translate(244.7,-345) scale(0.707)"><path data-c="34" d="M462 0Q444 3 333 3Q217 3 199 0H190V46H221Q241 46 248 46T265 48T279 53T286 61Q287 63 287 115V165H28V211L179 442Q332 674 334 675Q336 677 355 677H373L379 671V211H471V165H379V114Q379 73 379 66T385 54Q393 47 442 46H471V0H462ZM293 211V545L74 212L183 211H293Z"></path></g><rect width="603.1" height="60" x="120" y="220"></rect></g></g><g data-mml-node="mo" transform="translate(1120.8,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path></g><g data-mml-node="munderover" transform="translate(2176.6,0)"><g data-mml-node="mo"><path data-c="2211" d="M61 748Q64 750 489 750H913L954 640Q965 609 976 579T993 533T999 516H979L959 517Q936 579 886 621T777 682Q724 700 655 705T436 710H319Q183 710 183 709Q186 706 348 484T511 259Q517 250 513 244L490 216Q466 188 420 134T330 27L149 -187Q149 -188 362 -188Q388 -188 436 -188T506 -189Q679 -189 778 -162T936 -43Q946 -27 959 6H999L913 -249L489 -250Q65 -250 62 -248Q56 -246 56 -239Q56 -234 118 -161Q186 -81 245 -11L428 206Q428 207 242 462L57 717L56 728Q56 744 61 748Z"></path></g><g data-mml-node="TeXAtom" transform="translate(1089,477.1) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="221E" d="M55 217Q55 305 111 373T254 442Q342 442 419 381Q457 350 493 303L507 284L514 294Q618 442 747 442Q833 442 888 374T944 214Q944 128 889 59T743 -11Q657 -11 580 50Q542 81 506 128L492 147L485 137Q381 -11 252 -11Q166 -11 111 57T55 217ZM907 217Q907 285 869 341T761 397Q740 397 720 392T682 378T648 359T619 335T594 310T574 285T559 263T548 246L543 238L574 198Q605 158 622 138T664 94T714 61T765 51Q827 51 867 100T907 217ZM92 214Q92 145 131 89T239 33Q357 33 456 193L425 233Q364 312 334 337Q285 380 233 380Q171 380 132 331T92 214Z"></path></g></g><g data-mml-node="TeXAtom" transform="translate(1089,-285.4) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path></g><g data-mml-node="mo" transform="translate(600,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path></g><g data-mml-node="mn" transform="translate(1378,0)"><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path></g></g></g><g data-mml-node="mstyle" transform="translate(4643.6,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(4977.2,0)"><g data-mml-node="mfrac"><g data-mml-node="mrow" transform="translate(220,516.8) scale(0.707)"><g data-mml-node="mo"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="mo" transform="translate(389,0)"><path data-c="2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path></g><g data-mml-node="mn" transform="translate(1167,0)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g><g data-mml-node="msup" transform="translate(1667,0)"><g data-mml-node="mo"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g><g data-mml-node="TeXAtom" transform="translate(422,363) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path></g></g></g></g><g data-mml-node="mrow" transform="translate(285.5,-345) scale(0.707)"><g data-mml-node="mn"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g><g data-mml-node="mi" transform="translate(500,0)"><path data-c="1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path></g><g data-mml-node="mo" transform="translate(1100,0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path></g><g data-mml-node="mn" transform="translate(1878,0)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g></g><rect width="2012.5" height="60" x="120" y="220"></rect></g></g></g></g></g></svg></mjx-container>，即<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align:-1.602ex" xmlns="http://www.w3.org/2000/svg" width="36.457ex" height="4.638ex" role="img" focusable="false" viewBox="0 -1342 16113.8 2050"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mstyle"><g data-mml-node="mstyle"><g data-mml-node="mspace"></g></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(278,0)"><g data-mml-node="mfrac"><g data-mml-node="mi" transform="translate(220,676)"><path data-c="1D70B" d="M132 -11Q98 -11 98 22V33L111 61Q186 219 220 334L228 358H196Q158 358 142 355T103 336Q92 329 81 318T62 297T53 285Q51 284 38 284Q19 284 19 294Q19 300 38 329T93 391T164 429Q171 431 389 431Q549 431 553 430Q573 423 573 402Q573 371 541 360Q535 358 472 358H408L405 341Q393 269 393 222Q393 170 402 129T421 65T431 37Q431 20 417 5T381 -10Q370 -10 363 -7T347 17T331 77Q330 86 330 121Q330 170 339 226T357 318T367 358H269L268 354Q268 351 249 275T206 114T175 17Q164 -11 132 -11Z"></path></g><g data-mml-node="mn" transform="translate(255,-686)"><path data-c="34" d="M462 0Q444 3 333 3Q217 3 199 0H190V46H221Q241 46 248 46T265 48T279 53T286 61Q287 63 287 115V165H28V211L179 442Q332 674 334 675Q336 677 355 677H373L379 671V211H471V165H379V114Q379 73 379 66T385 54Q393 47 442 46H471V0H462ZM293 211V545L74 212L183 211H293Z"></path></g><rect width="770" height="60" x="120" y="220"></rect></g></g><g data-mml-node="mo" transform="translate(1288,0)"><path data-c="21" d="M78 661Q78 682 96 699T138 716T180 700T199 661Q199 654 179 432T158 206Q156 198 139 198Q121 198 119 206Q118 209 98 431T78 661ZM79 61Q79 89 97 105T141 121Q164 119 181 104T198 61Q198 31 181 16T139 1Q114 1 97 16T79 61Z"></path></g><g data-mml-node="mo" transform="translate(1843.8,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path></g><g data-mml-node="mn" transform="translate(2899.6,0)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g><g data-mml-node="mstyle" transform="translate(3399.6,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="mo" transform="translate(3788.8,0)"><path data-c="2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path></g><g data-mml-node="mstyle" transform="translate(4566.8,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(4956,0)"><g data-mml-node="mfrac"><g data-mml-node="mn" transform="translate(220,676)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g><g data-mml-node="mn" transform="translate(220,-686)"><path data-c="33" d="M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z"></path></g><rect width="700" height="60" x="120" y="220"></rect></g></g><g data-mml-node="mstyle" transform="translate(5896,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="mo" transform="translate(6285.2,0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path></g><g data-mml-node="mstyle" transform="translate(7063.2,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(7452.4,0)"><g data-mml-node="mfrac"><g data-mml-node="mn" transform="translate(220,676)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g><g data-mml-node="mn" transform="translate(220,-686)"><path data-c="35" d="M164 157Q164 133 148 117T109 101H102Q148 22 224 22Q294 22 326 82Q345 115 345 210Q345 313 318 349Q292 382 260 382H254Q176 382 136 314Q132 307 129 306T114 304Q97 304 95 310Q93 314 93 485V614Q93 664 98 664Q100 666 102 666Q103 666 123 658T178 642T253 634Q324 634 389 662Q397 666 402 666Q410 666 410 648V635Q328 538 205 538Q174 538 149 544L139 546V374Q158 388 169 396T205 412T256 420Q337 420 393 355T449 201Q449 109 385 44T229 -22Q148 -22 99 32T50 154Q50 178 61 192T84 210T107 214Q132 214 148 197T164 157Z"></path></g><rect width="700" height="60" x="120" y="220"></rect></g></g><g data-mml-node="mstyle" transform="translate(8392.4,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="mo" transform="translate(8781.7,0)"><path data-c="2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path></g><g data-mml-node="mstyle" transform="translate(9559.7,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(9948.9,0)"><g data-mml-node="mfrac"><g data-mml-node="mn" transform="translate(220,676)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g><g data-mml-node="mn" transform="translate(220,-686)"><path data-c="37" d="M55 458Q56 460 72 567L88 674Q88 676 108 676H128V672Q128 662 143 655T195 646T364 644H485V605L417 512Q408 500 387 472T360 435T339 403T319 367T305 330T292 284T284 230T278 162T275 80Q275 66 275 52T274 28V19Q270 2 255 -10T221 -22Q210 -22 200 -19T179 0T168 40Q168 198 265 368Q285 400 349 489L395 552H302Q128 552 119 546Q113 543 108 522T98 479L95 458V455H55V458Z"></path></g><rect width="700" height="60" x="120" y="220"></rect></g></g><g data-mml-node="mstyle" transform="translate(10888.9,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="mo" transform="translate(11278.1,0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path></g><g data-mml-node="mstyle" transform="translate(12056.1,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(12445.3,0)"><g data-mml-node="mfrac"><g data-mml-node="mn" transform="translate(220,676)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g><g data-mml-node="mn" transform="translate(220,-686)"><path data-c="39" d="M352 287Q304 211 232 211Q154 211 104 270T44 396Q42 412 42 436V444Q42 537 111 606Q171 666 243 666Q245 666 249 666T257 665H261Q273 665 286 663T323 651T370 619T413 560Q456 472 456 334Q456 194 396 97Q361 41 312 10T208 -22Q147 -22 108 7T68 93T121 149Q143 149 158 135T173 96Q173 78 164 65T148 49T135 44L131 43Q131 41 138 37T164 27T206 22H212Q272 22 313 86Q352 142 352 280V287ZM244 248Q292 248 321 297T351 430Q351 508 343 542Q341 552 337 562T323 588T293 615T246 625Q208 625 181 598Q160 576 154 546T147 441Q147 358 152 329T172 282Q197 248 244 248Z"></path></g><rect width="700" height="60" x="120" y="220"></rect></g></g><g data-mml-node="mstyle" transform="translate(13385.3,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="mo" transform="translate(13774.6,0)"><path data-c="2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path></g><g data-mml-node="mstyle" transform="translate(14552.6,0)"><g data-mml-node="mspace"></g></g><g data-mml-node="mo" transform="translate(14941.8,0)"><path data-c="22EF" d="M78 250Q78 274 95 292T138 310Q162 310 180 294T199 251Q199 226 182 208T139 190T96 207T78 250ZM525 250Q525 274 542 292T585 310Q609 310 627 294T646 251Q646 226 629 208T586 190T543 207T525 250ZM972 250Q972 274 989 292T1032 310Q1056 310 1074 294T1093 251Q1093 226 1076 208T1033 190T990 207T972 250Z"></path></g></g></g></g></g></svg></mjx-container>计算 pi 的近似值，这个值的精确度没有随机因素，只与计算深度有关。我们将数据分段计算，最后再用<strong>互斥量</strong>机制相加。</p><pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;math.h&gt;
+#include &lt;pthread.h&gt;
+
+const int MAX_THREADS = 1024;
+
+long thread_count;
+long long n;
+double sum;
+
+void* Thread_sum(void* rank);
+
+/* Only executed by main thread */
+void Get_args(int argc, char* argv[]);
+void Usage(char* prog_name);
+double Serial_pi(long long n);
+
+int main(int argc, char* argv[]) {
+   long       thread;  /* Use long in case of a 64-bit system */
+   pthread_t* thread_handles;
+
+   /* Get number of threads from command line */
+   Get_args(argc, argv);
+
+   thread_handles = (pthread_t*) malloc (thread_count*sizeof(pthread_t)); 
+   sum = 0.0;
+
+   for (thread = 0; thread &lt; thread_count; thread++)  
+      pthread_create(&amp;thread_handles[thread], NULL,
+          Thread_sum, (void*)thread);  
+
+   for (thread = 0; thread &lt; thread_count; thread++) 
+      pthread_join(thread_handles[thread], NULL); 
+
+   sum = 4.0*sum;
+   printf("With n = %lld terms,\n", n);
+   printf("   Our estimate of pi = %.15f\n", sum);
+   sum = Serial_pi(n);
+   printf("   Single thread est  = %.15f\n", sum);
+   printf("                   pi = %.15f\n", 4.0*atan(1.0));
+
+   free(thread_handles);
+   return 0;
+}  /* main */
+
+void* Thread_sum(void* rank) {
+   long my_rank = (long) rank;
+   double factor;
+   long long i;
+   long long my_n = n/thread_count;
+   long long my_first_i = my_n*my_rank;
+   long long my_last_i = my_first_i + my_n;
+   double my_sum = 0.0;
+
+   if (my_first_i % 2 == 0)
+      factor = 1.0;
+   else
+      factor = -1.0;
+
+   for (i = my_first_i; i &lt; my_last_i; i++, factor = -factor) {
+      my_sum += factor/(2*i+1);
+   }
+   pthread_mutex_lock(&amp;mutex);
+   sum += my_sum;
+   pthread_mutex_unlock(&amp;mutex);
+
+   return NULL;
+}  /* Thread_sum */
+
+double Serial_pi(long long n) {
+   double sum = 0.0;
+   long long i;
+   double factor = 1.0;
+
+   for (i = 0; i &lt; n; i++, factor = -factor) {
+      sum += factor/(2*i+1);
+   }
+   return 4.0*sum;
+
+}  /* Serial_pi */
+
+void Get_args(int argc, char* argv[]) {
+   if (argc != 3) Usage(argv[0]);
+   thread_count = strtol(argv[1], NULL, 10);  
+   if (thread_count &lt;= 0 || thread_count &gt; MAX_THREADS) Usage(argv[0]);
+   n = strtoll(argv[2], NULL, 10);
+   if (n &lt;= 0) Usage(argv[0]);
+}  /* Get_args */
+
+void Usage(char* prog_name) {
+   fprintf(stderr, "usage: %s &lt;number of threads&gt; &lt;n&gt;\n", prog_name);
+   fprintf(stderr, "   n is the number of terms and should be &gt;= 1\n");
+   fprintf(stderr, "   n should be evenly divisible by the number of threads\n");
+   exit(0);
+}  /* Usage */
+</code></pre><p>反正都不怎么精确就是了。</p><h3><span id="反正切级数欧拉变换">反正切级数欧拉变换</span></h3><p>虽然求 pi 的例子能很好地引入<strong>互斥量</strong>机制，参考 <a target="_blank" rel="nofollow noopener noreferer noreferrer external" href="https://www.zhihu.com/question/312520105/answer/601728029" alt="Pthreads - 共享内存式编程" title="Pthreads - 共享内存式编程">目前求 π 的算法中哪种收敛最快？ - byoshovel 的回答 - 知乎</a>，我们使用线性效率的<strong>反正切级数欧拉变换公式</strong>：</p><p><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align:-1.238ex" xmlns="http://www.w3.org/2000/svg" width="22.453ex" height="3.687ex" role="img" focusable="false" viewBox="0 -1082.7 9924.2 1629.8"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mfrac"><g data-mml-node="mi" transform="translate(220,394) scale(0.707)"><path data-c="1D70B" d="M132 -11Q98 -11 98 22V33L111 61Q186 219 220 334L228 358H196Q158 358 142 355T103 336Q92 329 81 318T62 297T53 285Q51 284 38 284Q19 284 19 294Q19 300 38 329T93 391T164 429Q171 431 389 431Q549 431 553 430Q573 423 573 402Q573 371 541 360Q535 358 472 358H408L405 341Q393 269 393 222Q393 170 402 129T421 65T431 37Q431 20 417 5T381 -10Q370 -10 363 -7T347 17T331 77Q330 86 330 121Q330 170 339 226T357 318T367 358H269L268 354Q268 351 249 275T206 114T175 17Q164 -11 132 -11Z"></path></g><g data-mml-node="mn" transform="translate(244.7,-345) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g><rect width="603.1" height="60" x="120" y="220"></rect></g><g data-mml-node="mo" transform="translate(1120.8,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path></g><g data-mml-node="munderover" transform="translate(2176.6,0)"><g data-mml-node="mo"><path data-c="2211" d="M61 748Q64 750 489 750H913L954 640Q965 609 976 579T993 533T999 516H979L959 517Q936 579 886 621T777 682Q724 700 655 705T436 710H319Q183 710 183 709Q186 706 348 484T511 259Q517 250 513 244L490 216Q466 188 420 134T330 27L149 -187Q149 -188 362 -188Q388 -188 436 -188T506 -189Q679 -189 778 -162T936 -43Q946 -27 959 6H999L913 -249L489 -250Q65 -250 62 -248Q56 -246 56 -239Q56 -234 118 -161Q186 -81 245 -11L428 206Q428 207 242 462L57 717L56 728Q56 744 61 748Z"></path></g><g data-mml-node="TeXAtom" transform="translate(1089,477.1) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="221E" d="M55 217Q55 305 111 373T254 442Q342 442 419 381Q457 350 493 303L507 284L514 294Q618 442 747 442Q833 442 888 374T944 214Q944 128 889 59T743 -11Q657 -11 580 50Q542 81 506 128L492 147L485 137Q381 -11 252 -11Q166 -11 111 57T55 217ZM907 217Q907 285 869 341T761 397Q740 397 720 392T682 378T648 359T619 335T594 310T574 285T559 263T548 246L543 238L574 198Q605 158 622 138T664 94T714 61T765 51Q827 51 867 100T907 217ZM92 214Q92 145 131 89T239 33Q357 33 456 193L425 233Q364 312 334 337Q285 380 233 380Q171 380 132 331T92 214Z"></path></g></g><g data-mml-node="TeXAtom" transform="translate(1089,-285.4) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="1D458" d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z"></path></g><g data-mml-node="mo" transform="translate(521,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path></g><g data-mml-node="mn" transform="translate(1299,0)"><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path></g></g></g><g data-mml-node="mfrac" transform="translate(4754.4,0)"><g data-mml-node="mrow" transform="translate(671.8,516.8) scale(0.707)"><g data-mml-node="mo"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="mn" transform="translate(389,0)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g><g data-mml-node="mi" transform="translate(889,0)"><path data-c="1D458" d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z"></path></g><g data-mml-node="mo" transform="translate(1410,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g><g data-mml-node="mo" transform="translate(1799,0)"><path data-c="21" d="M78 661Q78 682 96 699T138 716T180 700T199 661Q199 654 179 432T158 206Q156 198 139 198Q121 198 119 206Q118 209 98 431T78 661ZM79 61Q79 89 97 105T141 121Q164 119 181 104T198 61Q198 31 181 16T139 1Q114 1 97 16T79 61Z"></path></g><g data-mml-node="mo" transform="translate(2077,0)"><path data-c="21" d="M78 661Q78 682 96 699T138 716T180 700T199 661Q199 654 179 432T158 206Q156 198 139 198Q121 198 119 206Q118 209 98 431T78 661ZM79 61Q79 89 97 105T141 121Q164 119 181 104T198 61Q198 31 181 16T139 1Q114 1 97 16T79 61Z"></path></g></g><g data-mml-node="mrow" transform="translate(220,-370.3) scale(0.707)"><g data-mml-node="mo"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path></g><g data-mml-node="mn" transform="translate(389,0)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g><g data-mml-node="mi" transform="translate(889,0)"><path data-c="1D458" d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z"></path></g><g data-mml-node="mo" transform="translate(1410,0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path></g><g data-mml-node="mn" transform="translate(2188,0)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g><g data-mml-node="mo" transform="translate(2688,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></g><g data-mml-node="mo" transform="translate(3077,0)"><path data-c="21" d="M78 661Q78 682 96 699T138 716T180 700T199 661Q199 654 179 432T158 206Q156 198 139 198Q121 198 119 206Q118 209 98 431T78 661ZM79 61Q79 89 97 105T141 121Q164 119 181 104T198 61Q198 31 181 16T139 1Q114 1 97 16T79 61Z"></path></g><g data-mml-node="mo" transform="translate(3355,0)"><path data-c="21" d="M78 661Q78 682 96 699T138 716T180 700T199 661Q199 654 179 432T158 206Q156 198 139 198Q121 198 119 206Q118 209 98 431T78 661ZM79 61Q79 89 97 105T141 121Q164 119 181 104T198 61Q198 31 181 16T139 1Q114 1 97 16T79 61Z"></path></g></g><rect width="2768.9" height="60" x="120" y="220"></rect></g><g data-mml-node="msup" transform="translate(7763.3,0)"><g data-mml-node="mrow"><g data-mml-node="mo" transform="translate(0 -0.5)"><path data-c="28" d="M152 251Q152 646 388 850H416Q422 844 422 841Q422 837 403 816T357 753T302 649T255 482T236 250Q236 124 255 19T301 -147T356 -251T403 -315T422 -340Q422 -343 416 -349H388Q359 -325 332 -296T271 -213T212 -97T170 56T152 251Z"></path></g><g data-mml-node="mfrac" transform="translate(458,0)"><g data-mml-node="mn" transform="translate(220,394) scale(0.707)"><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></g><g data-mml-node="mn" transform="translate(220,-345) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></g><rect width="553.6" height="60" x="120" y="220"></rect></g><g data-mml-node="mo" transform="translate(1251.6,0) translate(0 -0.5)"><path data-c="29" d="M305 251Q305 -145 69 -349H56Q43 -349 39 -347T35 -338Q37 -333 60 -307T108 -239T160 -136T204 27T221 250T204 473T160 636T108 740T60 807T35 839Q35 850 50 850H56H69Q197 743 256 566Q305 425 305 251Z"></path></g></g><g data-mml-node="mi" transform="translate(1742.6,592) scale(0.707)"><path data-c="1D458" d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z"></path></g></g></g></g></svg></mjx-container></p><p>代码自 <a target="_blank" rel="nofollow noopener noreferer noreferrer external" href="https://blog.csdn.net/qin_zhangyongheng/article/details/8033942" alt="Pthreads - 共享内存式编程" title="Pthreads - 共享内存式编程">用 c++<ciallo></ciallo>高精度的计算π的值，可精确到 n 位</a> :</p><pre><code>#include<stdio.h>
+#include<math.h>
+int a[100000];
+int main()
+{
+    float s;
+    int b, x, n, c, i, j, d, l;
+    scanf("%d",&amp;x);
+    for (s = 0, n = 1; n &lt;= 5000; n++)
+    {
+        s = s + log10((2 * n + 1) / n);
+        if (s &gt; x + 1)
+        break;
+    }
+    for (i = 0; i &lt;= x + 5; i++)
+        a[i] = 0;
+    for (c = 1, j = n; j &gt;= 1; j--) //<ciallo></ciallo>按公式分布计算。
+    {
+        d = 2 * j + 1;
+        for (i = 0; i &lt;= x + 4; i++) //<ciallo></ciallo>各位实施除 2j+1.
+            {
+        a[i] = c / d;
+        c = (c % d) * 10 + a[i + 1];
+
+        }
+        a[x + 5] = c / d;
+        for (b = 0, i = x + 5; i &gt;= 0; i--) //<ciallo></ciallo>各位实施乘 j
+            {
+        a[i] = a[i] * j + b;
+        b = a[i] / 10;
+        a[i] = a[i] % 10;
+
+        }
+        a[0] = a[0] + 1;
+        c = a[0]; //<ciallo></ciallo>整数加 1.
+    }
+    for (b = 0, i = x + 5; i &gt;= 0; i--) //<ciallo></ciallo>按公式各位乘 2
+    {
+        a[i] = a[i] * 2 + b;
+        b = a[i] / 10;
+        a[i] = a[i] % 10;
+    }
+    printf("\nPI=%d.",a[0]); //<ciallo></ciallo>诸位输出计算结果。
+    for (l = 10, i = 1; i &lt;= x; i++)
+    {
+        printf("%d",a[i]);
+        l++;
+          if (l % 10 == 0)
+        printf("&nbsp;");
+        if (l % 50 == 0)
+        printf("\n");
+    }
+    printf("\n");
+    return 0;
+}
+</math.h></stdio.h></code></pre><p>这种方法和其他方法，或者无法准确切分数据块让 pthread 处理，或者计算结果依赖前项虽然肯定可以并行化处理，但通常要修改公式，改写成 pthread 并行较为困难。看之后学习有没有办法处理。</p><h2><span id="信号量semaphore">信号量（semaphore）</span></h2><h3><span id="介绍">介绍</span></h3><p>互斥量是有明显缺点的，我们只能控制临界区每个时刻至多只有一个线程在访问，但不能跨线程控制临界区在我们想执行的时候开始。</p><p>当然，使用 while 结构的<strong>忙等待机制</strong>能够解决这个问题，但忙等待本身效率不高。</p><p>荷兰计算机科学家<ciallo></ciallo>_<ciallo></ciallo>艾兹赫尔·戴克斯特拉<ciallo></ciallo>_<ciallo></ciallo>提出了<strong>信号量（semaphore）</strong>的概念。在系统中，给予每一个进程一个信号量，代表每个进程当前的状态，未得到控制权的进程会在特定地方被强迫停下来，等待可以继续进行的信号到来。（来自 <a target="_blank" rel="nofollow noopener noreferer noreferrer external" href="https://zh.wikipedia.org/wiki/%E4%BF%A1%E5%8F%B7%E9%87%8F" alt="Pthreads - 共享内存式编程" title="Pthreads - 共享内存式编程">信号量</a> - Wikipedia）总的来说，信号量的作用是给予进程控制权。</p><p><img src="/images/pthreads2.png" alt="信号量"></p><p>分析如下代码：</p><pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;pthread.h&gt;
+#include &lt;semaphore.h&gt;
+
+#define BARRIER_COUNT 100
+
+int thread_count;
+int counter;
+sem_t barrier_sems[BARRIER_COUNT];
+sem_t count_sem;
+
+void Usage(char* prog_name);
+void *Thread_work(void* rank);
+
+int main(int argc, char* argv[]) {
+   long       thread, i;
+   pthread_t* thread_handles; 
+
+   if (argc != 2)
+      Usage(argv[0]);
+   thread_count = strtol(argv[1], NULL, 10);
+
+   thread_handles = malloc (thread_count*sizeof(pthread_t));
+   for (i = 0; i &lt; BARRIER_COUNT; i++)
+      sem_init(&amp;barrier_sems[i], 0, 0);
+   sem_init(&amp;count_sem, 0, 1);
+
+   for (thread = 0; thread &lt; thread_count; thread++)
+      pthread_create(&amp;thread_handles[thread], (pthread_attr_t*) NULL,
+          Thread_work, (void*) thread);
+
+   for (thread = 0; thread &lt; thread_count; thread++) {
+      pthread_join(thread_handles[thread], NULL);
+   }
+
+   sem_destroy(&amp;count_sem);
+   for (i = 0; i &lt; BARRIER_COUNT; i++)
+      sem_destroy(&amp;barrier_sems[i]);
+   free(thread_handles);
+   return 0;
+}  /* main */
+
+void Usage(char* prog_name) {
+
+   fprintf(stderr, "usage: %s &lt;number of threads&gt;\n", prog_name);
+   exit(0);
+}  /* Usage */
+
+void *Thread_work(void* rank) {
+   long my_rank = (long) rank;
+   int i, j;
+
+   for (i = 0; i &lt; BARRIER_COUNT; i++) {
+      sem_wait(&amp;count_sem);
+      if (counter == thread_count - 1) {
+         counter = 0;
+         sem_post(&amp;count_sem);
+         for (j = 0; j &lt; thread_count-1; j++)
+            sem_post(&amp;barrier_sems[i]);
+      } else {
+         counter++;
+         sem_post(&amp;count_sem);
+         sem_wait(&amp;barrier_sems[i]);
+      }
+
+      if (my_rank == 0) {
+         printf("All threads completed barrier %d\n", i);
+         fflush(stdout);
+      }
+
+   }
+
+   return NULL;
+}  /* Thread_work */
+</code></pre><p>其中与<strong>信号量</strong>有关的核心代码为：</p><pre><code>//#include &lt;semaphore.h&gt;
+//sem_t barrier_sems[BARRIER_COUNT];
+//sem_t count_sem;
+//sem_init(&amp;barrier_sems[i], 0, 0); 第三个参数代表初始值
+//sem_init(&amp;count_sem, 0, 1);
+//sem_destroy();
+for (i = 0; i &lt; BARRIER_COUNT; i++) {
+      sem_wait(&amp;count_sem);
+      if (counter == thread_count - 1) {
+         counter = 0;
+         sem_post(&amp;count_sem);
+         for (j = 0; j &lt; thread_count-1; j++)
+            sem_post(&amp;barrier_sems[i]);
+      } else {
+         counter++;
+         sem_post(&amp;count_sem);
+         sem_wait(&amp;barrier_sems[i]);
+      }
+
+      if (my_rank == 0) {
+         printf("All threads completed barrier %d\n", i);
+         fflush(stdout);
+      }
+</code></pre><p>其中<ciallo></ciallo><code>sem_t</code><ciallo></ciallo>可视作<ciallo></ciallo><code>unsigned int</code>，<code>sem_post()</code><ciallo></ciallo>为信号量增加 1，<code>sem_wait(&amp;sem)</code><ciallo></ciallo>持续检测信号量，直到信号量大于 0 才继续运行，并将信号量减 1。</p><p>因此这段代码将<ciallo></ciallo><code>0～thread_count - 2</code><ciallo></ciallo>的进程锁住，在最后一个线程统一解锁。（毫无意义）注意<ciallo></ciallo><code>sem_wait(&amp;count_sem);</code>和<ciallo></ciallo><code>sem_post(&amp;count_sem);</code>一一对应，用于控制更改 counter 值的这一个临界区。</p><h3><span id="生产者-消费者同步模型">生产者-消费者同步模型</span></h3><p>以下内容来自 <a target="_blank" rel="nofollow noopener noreferer noreferrer external" href="https://zhuanlan.zhihu.com/p/73442055" alt="Pthreads - 共享内存式编程" title="Pthreads - 共享内存式编程">经典并发同步模式：生产者-消费者设计模式 | 知乎</a></p><h4><span id="什么是生产者-消费者模型">什么是生产者-消费者模型</span></h4><p>比如有两个进程 A 和 B，它们共享一个<strong>固定大小的缓冲区</strong>，A 进程产生数据放入缓冲区，B 进程从缓冲区中取出数据进行计算，那么这里其实就是一个生产者和消费者的模型，A 相当于生产者，B 相当于消费者。</p><p><img src="/images/pthreads3.png" alt="生产者-消费者模型"></p><h4><span id="为什么要使用生产者消费者模型">为什么要使用生产者消费者模型</span></h4><p>在多线程开发中，如果生产者生产数据的速度很快，而消费者消费数据的速度很慢，那么生产者就必须等待消费者消费完了数据才能够继续生产数据，因为生产那么多也没有地方放啊；同理如果消费者的速度大于生产者那么消费者就会经常处理等待状态，所以为了达到生产者和消费者生产数据和消费数据之间的<strong>平衡</strong>，那么就需要一个缓冲区用来存储生产者生产的数据，所以就引入了生产者-消费者模型。</p><h4><span id="生产者-消费者模型的特点">生产者-消费者模型的特点</span></h4><ul><li>保证生产者不会在缓冲区满的时候继续向缓冲区放入数据，而消费者也不会在缓冲区空的时候，消耗数据</li><li>当缓冲区满的时候，生产者会进入休眠状态，当下次消费者开始消耗缓冲区的数据时，生产者才会被唤醒，开始往缓冲区中添加数据；当缓冲区空的时候，消费者也会进入休眠状态，直到生产者往缓冲区中添加数据时才会被唤醒</li></ul><p><img src="/images/pthreads4.png" alt="生产者-消费者模型"></p><h4><span id="生产者-消费者模型的应用场景生产者-消费者模型的应用场景">生产者-消费者模型的应用场景生产者-消费者模型的应用场景</span></h4><p>生产者-消费者模型一般用于将生产数据的一方和消费数据的一方分割开来，将生产数据与消费数据的过程解耦开来</p><ul><li><p>Excutor 任务执行框架：</p></li><li><ul><li>通过将任务的提交和任务的执行解耦开来，提交任务的操作相当于生产者，执行任务的操作相当于消费者</li><li>例如使用 Excutor 构建 web 服务器，用于处理线程的请求：生产者将任务提交给线程池，线程池创建线程处理任务，如果需要运行的任务数大于线程池的基本线程数，那么就把任务扔到阻塞队列（通过线程池<ciallo></ciallo>+<ciallo></ciallo>阻塞队列的方式比只使用一个阻塞队列的效率高很多，因为消费者能够处理就直接处理掉了，不用每个消费者都要先从阻塞队列中取出任务再执行）</li></ul></li><li><p>消息中间件 activeMQ:</p></li><li><ul><li>双十一的时候，会产生大量的订单，那么不可能同时处理那么多的订单，需要将订单放入一个队列里面，然后由专门的线程处理订单。这里用户下单就是生产者，处理订单的线程就是消费者；再比如 12306 的抢票功能，先由一个容器存储用户提交的订单，然后再由专门处理订单的线程慢慢处理，这样可以在短时间内支持高并发服务</li></ul></li><li><p>任务的处理时间比较长的情况下：</p></li><li><ul><li>比如上传附近并处理，那么这个时候可以将用户上传和处理附件分成两个过程，用一个队列暂时存储用户上传的附近，然后立刻返回用户上传成功，然后有专门的线程处理队列中的附近</li></ul></li></ul><h4><span id="生产者-消费者模型的优点">生产者-消费者模型的优点</span></h4><ul><li>解耦：将生产者类和消费者类进行解耦，消除代码之间的依赖性，简化工作负载的管理</li><li>复用：通过将生产者类和消费者类独立开来，那么可以对生产者类和消费者类进行独立的复用与扩展</li><li>调整并发数：由于生产者和消费者的处理速度是不一样的，可以调整并发数，给予慢的一方多的并发数，来提高任务的处理速度</li><li>异步：对于生产者和消费者来说能够各司其职，生产者只需要关心缓冲区是否还有数据，不需要等待消费者处理完；同样的对于消费者来说，也只需要关注缓冲区的内容，不需要关注生产者，通过异步的方式支持高并发，将一个耗时的流程拆成生产和消费两个阶段，这样生产者因为执行 put() 的时间比较短，而支持高并发</li><li>支持分布式：生产者和消费者通过队列进行通讯，所以不需要运行在同一台机器上，在分布式环境中可以通过 redis 的 list 作为队列，而消费者只需要轮询队列中是否有数据。同时还能支持集群的伸缩性，当某台机器宕掉的时候，不会导致整个集群宕掉</li></ul><p>（引用结束）</p><p><strong>在我们的例子中，信号量的值可看作生产者数量，<code>sem_wait(&amp;count_sem);</code>代表等待的消费者和消费过程。</strong></p><h2><span id="互斥量和信号量的比较">互斥量和信号量的比较</span></h2><h3><span id="互斥量和信号量的区别">互斥量和信号量的区别</span></h3><p>参考 <a href="zhihu.com/question/47704079">semaphore 和 mutex 的区别？ | 知乎</a> 一句话概括（来自 <a target="_blank" rel="nofollow noopener noreferer noreferrer external" href="https://www.zhihu.com/question/47704079/answer/135859188" alt="Pthreads - 共享内存式编程" title="Pthreads - 共享内存式编程">二律背反</a>）：</p><blockquote><p>互斥量 (mutex)：<strong>保护共享资源。</strong></p><p>信号量 (semaphore)：<strong>调度线程</strong>。</p></blockquote><h3><span id="用互斥量实现生产者-消费者模型">用互斥量实现生产者-消费者模型</span></h3><p>尽管生产者-消费者同步采用信号量很容易实现，但它也能用互斥量来实现。基本的想 法是：让生产者线程和消费者线程共享一个互斥量。用一个被主线程初始化为 false 的 标志变量来表示是否有产品可以被<ciallo></ciallo>“消费”。在下面的代码中，通过修改 if 条件，我们可以构建需要的生产者-消费者模型。</p><pre><code>void *Thread_work(void* rank) {
+    long my_rank = (long) rank;
+    int send = 0, recv = 0;
+
+    while(1) {
+        pthread_mutex_lock(&amp;mutex);
+        if(msg) {
+            if (my_rank == receiver &amp;&amp; !recv) {
+                //<ciallo></ciallo>消费
+                msg = 0;
+                recv = 1;
+            }
+        } else {
+            if (!send) {
+                        //<ciallo></ciallo>生产
+                msg = 1;
+                send = 1;
+                receiver = receiver_rank; //receiver_rank 代表接收核编号
+            }
+        }
+        pthread_mutex_unlock(&amp;mutex);
+        if (send &amp;&amp; recv) break; //<ciallo></ciallo>跳出循环条件，这里是一次生产，一次消费
+    }
+
+    return NULL;
+}
+</code></pre><p>如果消费者线程首先进入循环，它会看到没有可用的信息 (<strong>message_available</strong> 值为 <code>false</code>) 并在调用 <code>pthread_mutex_unlock</code> 后返回。消费者线程重复上述过程，直到生产者线程生产出信息。</p><p>我们给出每个线程都生产一次，消费一次的核心代码：</p><pre><code>void *Thread_work(void* rank) {
+    long my_rank = (long) rank;
+    int send = 0, recv = 0;
+
+    while(1) {
+        pthread_mutex_lock(&amp;mutex);
+        if(msg) {
+      //<ciallo></ciallo>消费
+            if (my_rank == receiver &amp;&amp; !recv) {
+                printf("Th %ld &gt; Received: %s\n", 
+                                      my_rank, message);
+                msg = 0;
+                recv = 1;
+            }
+        } else {
+            if (!send) {
+        //<ciallo></ciallo>生产
+                sprintf(message, "hello from rank %ld", 
+                                      my_rank);
+                msg = 1;
+                send = 1;
+                receiver = (my_rank+1) % thread_count;
+            }
+        }
+        pthread_mutex_unlock(&amp;mutex);
+        if (send &amp;&amp; recv) break; //<ciallo></ciallo>跳出循环条件，这里是一次生产，一次消费
+    }
+
+    return NULL;
+}
+</code></pre><h2><span id="路障和条件变量">路障和条件变量<ciallo></ciallo></span></h2><p>Pthreads 中实现路障的最好方式之一是<strong>条件变量</strong>。基本实现如图所示：</p><p><img src="/images/pthreads5.png" alt="条件变量"></p><p>当然条件变量也要初始化和销毁，与互斥量的调用方法类似。官方文档如下：</p><blockquote><p><code>#include &lt;semaphore.h&gt;</code><br>初始化条件变量：<br><code>int pthread_cond_init(pthread_cond_t *cond, pthread_condattr_t *cond_attr);</code><br>该函数第一个参数为条件变量指针，第二个参数为条件变量属性指针（一般设为 NULL）。该函数按照条件变量属性对条件变量进程初始化。<br>无条件等待：<br><code>int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex);</code><br>该函数第一个参数为条件变量指针，第二个为互斥量指针。该函数调用前，需本线程加锁互斥量，加锁状态的时间内函数完成线程加入等待队列操作 ，线程进入等待前函数解锁互斥量。在满足条件离开 pthread_cond_wait 函数之前重新获得互斥量并加锁，因此，本线程之后需要再次解锁互斥量。<br>通知一个线程：<br><code>int pthread_cond_signal(pthread_cond_t *cond);</code><br>该函数的参数为条件变量指针。该函数向队列第一个等待线程发送信号，解除这个线程的阻塞状态。<br>通知所有线程：<br><code>int pthread_cond_broadcast(pthread_cond_t *cond);</code><br>该函数的参数为条件变量指针。该函数想队列所有等待线程发送信号，解除这些线程的阻塞状态。<br>销毁条件变量：<br><code>int pthread_cond_destroy(pthread_cond_t *cond);</code><br>该函数销毁条件变量。</p></blockquote><h2><span id="多线程链表和-pthreads-读写锁">多线程链表和 Pthreads 读写锁</span></h2><h4><span id="多线程链表的不同实现">多线程链表的不同实现</span></h4><p>考虑一个不降序列链表查找，加入和删除的实现，再多线程调用时，每个位置应该只有一个线程访问，我们可以把整个链表作为一个临界区（<strong>实际上是串行</strong>），也可以为每个节点设置独立的互斥量和临界区。</p><p>但如果我们区分<strong>读写操作</strong>，那么每个位置可以同时被多个线程读取，因此可以引入更有效率的<ciallo></ciallo><strong>Pthreads 读写锁</strong>。</p><p>以下是读写锁在多线程链表上的实现：</p><pre><code>#include<pthread.h>
+pthread_rwlock_t rwlock;
+pthread_rwlock_init(&amp;rwlock,NULL);
+//<ciallo></ciallo>读写锁初始化：该函数第一个参数为读写锁指针，第二个参数为读写锁属性指针（置为 NULL 即可）
+
+pthread_rwlock_rdlock(&amp;rwlock); //<ciallo></ciallo>加读锁
+Member(value); //<ciallo></ciallo>查找
+pthread_rwlock_unlock(&amp;rwlock);
+
+pthread_rwlock_wrlock(&amp;rwlock); //<ciallo></ciallo>加写锁
+Insert(value); //<ciallo></ciallo>插入
+pthread_rwlock_unlock(&amp;rwlock);
+
+pthread_rwlock_wrlock(&amp;rwlock); //<ciallo></ciallo>加写锁
+Delete(value); //<ciallo></ciallo>删除
+pthread_rwlock_unlock(&amp;rwlock);
+
+pthread_rwlock_destroy(&amp;rwlock);
+</pthread.h></code></pre><p>多个线程能通过调用读锁函数而同时获得锁，但只有一个线程能通过写锁函数获得锁。因此，如果任何线程拥有了读锁，则任何请求写锁的线程将阻塞在写锁函数的调用上。而且，如果任何线程拥有了写锁，则任何想获取读或写锁的线程将阻塞在它们对应的锁函数上。</p><h4><span id="不同实现方案的开销分析">不同实现方案的开销分析</span></h4><p><img src="/images/pthreads6.png" alt="开销分析"></p><p>可以看出，过多的枷锁和解锁开销过大，而并行使用读写锁在 Member 占比极大时才优于串行实现的方案。</p><h2><span id="线程安全性">线程安全性</span></h2><blockquote><p>线程安全是程式设计中的术语，指某个函数、函数库在多线程环境中被调用时，能够正确地处理多个线程之间的共享变量，使程序功能正确完成。</p><p>假设有间银行只有 1000 元，而两个人同时提领 1000 元时就可能会拿到总计 2000 元的金额。为了避免这个问题，该间银行提款时应该使用互斥锁，即意味着针对同一个资源处理时，前一个人提领交易完成后才处理下一笔交易。但这种手法会使得效能降低。</p><p>一般来说，线程安全的函数应该为每个调用它的线程分配专门的空间，来储存需要单独保存的状态（如果需要的话），不依赖于<ciallo></ciallo>“线程惯性”，把多个线程共享的变量正确对待（如，通知编译器该变量为<ciallo></ciallo>“易失（volatile）”<ciallo></ciallo>型，阻止其进行一些不恰当的优化），而且，线程安全的函数一般不应该修改全局对象。</p><p>很多 C 库代码（比如某些<ciallo></ciallo>** strtok **<ciallo></ciallo>的实现，它将<ciallo></ciallo>“多次调用中需要保持不变的状态”<ciallo></ciallo>储存在静态变量中，导致不恰当的共享）不是线程安全的，在多线程环境中调用这些函数时，要进行特别的预防措施，或者寻找别的替代方案。</p></blockquote><p>下面给出 c 语言的线程安全函数和非线程安全函数。（来自 <a target="_blank" rel="nofollow noopener noreferer noreferrer external" href="http://www.keil.com/support/man/docs/armlib/armlib_chr1359122864458.htm" alt="Pthreads - 共享内存式编程" title="Pthreads - 共享内存式编程">Thread-safe C library functions</a> 和 <a target="_blank" rel="nofollow noopener noreferer noreferrer external" href="http://www.keil.com/support/man/docs/armlib/armlib_chr1359122864707.htm" alt="Pthreads - 共享内存式编程" title="Pthreads - 共享内存式编程">C library functions that are not thread-safe</a>）</p><h3><span id="thread-safe-c-library-functions">Thread-safe C library functions</span></h3><p>The following table shows the C library functions that are thread-safe.</p><table><thead><tr><th align="left">Functions</th><th align="left">Description</th></tr></thead><tbody><tr><td align="left"><code>calloc(), free(), malloc(), realloc()</code></td><td align="left">The heap functions are thread-safe if the <code>_mutex_</code>* functions are implemented.All threads share a single heap and use mutexes to avoid data corruption when there is concurrent access. Each heap implementation is responsible for doing its own locking. If you supply your own allocator, it must also do its own locking. This enables it to do fine-grained locking if required, rather than protecting the entire heap with a single mutex (coarse-grained locking).</td></tr><tr><td align="left"><code>alloca()</code></td><td align="left"><code>alloca()</code> is thread-safe because it allocates memory on the stack.</td></tr><tr><td align="left"><code>abort(), raise(), signal(), fenv.h</code></td><td align="left">The ARM® signal handling functions and floating-point exception traps are thread-safe.The settings for signal handlers and floating-point traps are global across the entire process and are protected by locks. Data corruption does not occur if multiple threads call <code>signal()</code> or an fenv.h function at the same time. However, be aware that the effects of the call act on all threads and not only on the calling thread.</td></tr><tr><td align="left"><code>clearerr(), fclose(), feof(),ferror(), fflush(), fgetc(),fgetpos(), fgets(), fopen(),fputc(), fputs(), fread(),freopen(), fseek(), fsetpos(),ftell(), fwrite(), getc(),getchar(), gets(), perror(),putc(), putchar(), puts(),rewind(), setbuf(), setvbuf(),tmpfile(), tmpnam(), ungetc()</code></td><td align="left">The <code>stdio</code> library is thread-safe if the <code>_mutex_</code>* functions are implemented.Each individual stream is protected by a lock, so two threads can each open their own <code>stdio</code> stream and use it, without interfering with one another.If two threads both want to read or write the same stream, locking at the <code>fgetc()</code> and <code>fputc()</code> level prevents data corruption, but it is possible that the individual characters output by each thread might be interleaved in a confusing way.Note<code>tmpnam()</code> also contains a static buffer but this is only used if the argument is <code>NULL</code>. To ensure that your use of <code>tmpnam()</code> is thread-safe, supply your own buffer space.</td></tr><tr><td align="left"><code>fprintf(), printf(), vfprintf(), vprintf(), fscanf(), scanf()</code></td><td align="left">When using these functions:The standard C <code>printf()</code> and <code>scanf()</code> functions use <code>stdio</code> so they are thread-safe.The standard C <code>printf()</code> function is susceptible to changes in the locale settings if called in a multithreaded program.</td></tr><tr><td align="left"><code>clock()</code></td><td align="left"><code>clock()</code> contains static data that is written once at program startup and then only ever read. Therefore, <code>clock()</code> is thread-safe provided no extra threads are already running at the time that the library is initialized.</td></tr><tr><td align="left"><code>errno</code></td><td align="left"><code>errno</code> is thread-safe.Each thread has its own <code>errno</code> stored in a <code>__user_perthread_libspace</code> block. This means that each thread can call <code>errno</code>-setting functions independently and then check <code>errno</code> afterwards without interference from other threads.</td></tr><tr><td align="left"><code>atexit()</code></td><td align="left">The list of exit functions maintained by <code>atexit()</code> is process-global and protected by a lock.In the worst case, if more than one thread calls <code>atexit()</code>, the order that exit functions are called cannot be guaranteed.</td></tr><tr><td align="left"><code>abs(), acos(), asin(),atan(), atan2(), atof(),atol(), atoi(), bsearch(),ceil(), cos(), cosh(),difftime(), div(), exp(),fabs(), floor(), fmod(),frexp(), labs(), ldexp(),ldiv(), log(), log10(),memchr(), memcmp(), memcpy(),memmove(), memset(), mktime(),modf(), pow(), qsort(),sin(), sinh(), sqrt(),strcat(), strchr(), strcmp(),strcpy(), strcspn(), strlcat(),strlcpy(), strlen(), strncat(),strncmp(), strncpy(), strpbrk(),strrchr(), strspn(), strstr(),strxfrm(), tan(), tanh()</code></td><td align="left">These functions are inherently thread-safe.</td></tr><tr><td align="left"><code>longjmp(), setjmp()</code></td><td align="left">Although <code>setjmp()</code> and <code>longjmp()</code> keep data in <code>__user_libspace</code>, they call the <code>__alloca_*</code> functions, that are thread-safe.</td></tr><tr><td align="left"><code>remove(), rename(), time()</code></td><td align="left">These functions use interrupts that communicate with the ARM debugging environments. Typically, you have to reimplement these for a real-world application.</td></tr><tr><td align="left"><code>snprintf(), sprintf(), vsnprintf(),vsprintf(), sscanf(), isalnum(),isalpha(), iscntrl(), isdigit(),isgraph(), islower(), isprint(),ispunct(), isspace(), isupper(),isxdigit(), tolower(), toupper(),strcoll(), strtod(), strtol(),strtoul(), strftime()</code></td><td align="left">When using these functions, the string-based functions read the locale settings. Typically, they are thread-safe. However, if you change locale in mid-session, you must ensure that these functions are not affected.The string-based functions, such as <code>sprintf()</code> and <code>sscanf()</code>, do not depend on the <code>stdio</code> library.</td></tr><tr><td align="left"><code>stdin, stdout, stderr</code></td><td align="left">These functions are thread-safe.</td></tr></tbody></table><h3><span id="c-library-functions-that-are-not-thread-safe">C library functions that are not thread-safe</span></h3><p>The following table shows the C library functions that are not thread-safe.</p><table><thead><tr><th align="left">Functions</th><th align="left">Description</th></tr></thead><tbody><tr><td align="left"><code>asctime(), localtime(), strtok()</code></td><td align="left">These functions are all thread-unsafe. Each contains a static buffer that might be overwritten by another thread between a call to the function and the subsequent use of its return value.ARM® supplies reentrant versions, <code>_asctime_r()</code>, <code>_localtime_r()</code>, and <code>_strtok_r()</code>. ARM recommends that you use these functions instead to ensure safety.NoteThese reentrant versions take additional parameters. <code>_asctime_r()</code> takes an additional parameter that is a pointer to a buffer that the output string is written into. <code>_localtime_r()</code> takes an additional parameter that is a pointer to a <code>struct tm</code>, that the result is written into. <code>_strtok_r()</code> takes an additional parameter that is a pointer to a <code>char</code> pointer to the next token.</td></tr><tr><td align="left"><code>exit()</code></td><td align="left">Do not call <code>exit()</code> in a multithreaded program even if you have provided an implementation of the underlying <code>_sys_exit()</code> that actually terminates all threads.In this case, <code>exit()</code> cleans up before calling <code>_sys_exit()</code> so disrupts other threads.</td></tr><tr><td align="left"><code>gamma(), lgamma(), lgammaf(), lgammal()</code></td><td align="left">These extended mathlib functions use a global variable, _signgam, so are not thread-safe.</td></tr><tr><td align="left"><code>mbrlen(), mbsrtowcs(), mbrtowc(), wcrtomb(), wcsrtombs()</code></td><td align="left">The C90 multibyte conversion functions (defined in stdlib.h) are not thread-safe, for example <code>mblen()</code> and <code>mbtowc()</code>, because they contain internal static state that is shared between all threads without locking.However, the extended restartable versions (defined in wchar.h) are thread-safe, for example <code>mbrtowc()</code> and <code>wcrtomb()</code>, provided you pass in a pointer to your own mbstate_t object. You must exclusively use these functions with non-NULL mbstate_t * parameters if you want to ensure thread-safety when handling multibyte strings.</td></tr><tr><td align="left"><code>rand(), srand()</code></td><td align="left">These functions keep internal state that is both global and unprotected. This means that calls to <code>rand()</code> are never thread-safe.ARM recommends that you do one of the following:Use the reentrant versions <code>_rand_r()</code> and <code>_srand_r()</code> supplied by ARM. These use user-provided buffers instead of static data within the C library.Use your own locking to ensure that only one thread ever calls <code>rand()</code> at a time, for example, by defining <code>rand()</code> if you want to avoid changing your code.Arrange that only one thread ever needs to generate random numbers.Supply your own random number generator that can have multiple independent instances.Note<code>_rand_r()</code> and <code>_srand_r()</code> both take an additional parameter that is a pointer to a buffer storing the state of the random number generator.</td></tr><tr><td align="left"><code>setlocale(), localeconv()</code></td><td align="left"><code>setlocale()</code> is used for setting and reading locale settings. The locale settings are global across all threads, and are not protected by a lock. If two threads call <code>setlocale()</code> to simultaneously modify the locale settings, or if one thread reads the settings while another thread is modifying them, data corruption might occur. Also, many other functions, for example <code>strtod()</code> and <code>sprintf()</code>, read the current locale settings. Therefore, if one thread calls <code>setlocale()</code> concurrently with another thread calling such a function, there might be unexpected results.Multiple threads reading the settings simultaneously is thread-safe in simple cases and if no other thread is simultaneously modifying those settings, but where internally an intermediate buffer is required for more complicated returned results, unexpected results can occur unless you use a reentrant version of <code>setlocale()</code>.ARM recommends that you either:Choose the locale you want and call <code>setlocale()</code> once to initialize it. Do this before creating any additional threads in your program so that any number of threads can read the locale settings concurrently without interfering with one another.Use the reentrant version <code>_setlocale_r()</code> supplied by ARM. This returns a string that is either a pointer to a constant string, or a pointer to a string stored in a user-supplied buffer that can be used for thread-local storage, rather than using memory within the C library. The buffer must be at least <code>_SETLOCALE_R_BUFSIZE</code> bytes long, including space for a trailing <code>NUL</code>.Be aware that <code>_setlocale_r()</code> is not fully thread-safe when accessed concurrently to change locale settings. This access is not lock-protected.Also, be aware that <code>localeconv()</code> is not thread-safe. Call the ARM function <code>_get_lconv()</code> with a pointer to a user-supplied buffer instead.</td></tr></tbody></table><h2><span id="参考资料">参考资料</span></h2><p>并行计算导论。Introduction to Parallel Computing. Ananth Grama.</p><p></p></div><div class="pagination" style="width:100%"><p class="clearfix"><span class="pre pagbuttons" style="float:left"><a role="navigation" href="/hexo-deploy/" title="使用 Github Actions 将 Hexo 托管至腾讯云"><i class="fa fa-angle-double-left"></i>&nbsp;上一篇: 使用 Github Actions 将 Hexo 托管至腾讯云</a></span><span>&nbsp;</span><span class="next pagbuttons" style="float:right"><a role="navigation" href="/info-proxy/" title="使用 Node.js 建立 info 的简单代理服务器">下一篇: 使用 Node.js 建立 info 的简单代理服务器&nbsp;<i class="fa fa-angle-double-right"></i></a></span></p></div><div id="comments"></div><script src="//cdn.staticfile.org/artalk/2.4.4/Artalk.min.js"></script><script>var artalk=new Artalk({el:"#comments",pageKey:"https://blog.pka.moe/pthreads/",pageTitle:"Pthreads - 共享内存式编程",server:"https://talk.lo-li.co",site:"纸蛇的博客",locale:"auto"})</script></div></div></div><div class="visible-xs site-bottom-footer"><footer><p>©&nbsp;2019-2023&nbsp;<a target="_blank" href="https://pka.moe" rel="internal follow bookmark" alt="Pthreads - 共享内存式编程" title="Pthreads - 共享内存式编程">Papersnake</a></p><p>Theme&nbsp;<a target="_blank" href="https://github.com/SumiMakito/hexo-theme-typography" rel="nofollow noopener noreferer noreferrer external" alt="Pthreads - 共享内存式编程" title="Pthreads - 共享内存式编程">Typography</a>&nbsp;by&nbsp;<a target="_blank" href="https://www.keep.moe" rel="nofollow noopener noreferer noreferrer external" alt="Pthreads - 共享内存式编程" title="Pthreads - 共享内存式编程">Makito</a></p><p>Proudly published with&nbsp;<a target="_blank" href="https://hexo.io" rel="nofollow noopener noreferer noreferrer external" alt="Pthreads - 共享内存式编程" title="Pthreads - 共享内存式编程">Hexo</a></p></footer></div></div></div></div><script src="//cdn.staticfile.org/jquery/3.6.3/jquery.min.js"></script><script src="//cdn.staticfile.org/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script><script src="//cdn.staticfile.org/jquery-migrate/3.4.0/jquery-migrate.min.js"></script><script src="//cdn.staticfile.org/jquery-appear/0.1/jquery.appear.min.js"></script><script src="/js/typography.js"></script><script src="//cdn.staticfile.org/highlight.js/11.7.0/highlight.min.js"></script><script>hljs.highlightAll()</script><script>function hitokoto(){$("#hitokoto").html("&nbsp;"),$.get("https://v1.hitokoto.cn/?max_length=15",{},(function(o){$("#hitokoto").html(o.hitokoto)}),"JSON")}hitokoto()</script><script>Math.random()<.5&&$("head").append("<style>body::before{transform: rotateY(180deg) !important;background-position: right bottom !important}</style>")</script></body></html>

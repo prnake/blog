@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: *.md
+Allow: /
+
+Sitemap: https://blog.pka.moe/sitemap.xml
