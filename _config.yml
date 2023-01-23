@@ -194,12 +194,12 @@ seo:
         toplevel: true
         safari10: true
   schema:
-    article:
-      enable: true
+    # article:
+    #   enable: false
     breadcrumb:
       enable: true
     # sitelink:
-    #   enable: true
+    #   enable: false
     #   searchUrl: https://blog.pka.moe/search/?s={search_term_string}
   # external links fix
   links:
