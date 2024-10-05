@@ -15,6 +15,11 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+
+  <follow_challenge>
+    <feedId>58856051670814792</feedId>
+    <userId>56199145723887616</userId>
+  </follow_challenge>
   
   <entry>
     <title>旁路攻击：一道典型题的分析</title>
